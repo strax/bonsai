@@ -1,0 +1,7 @@
+{
+  "name": "@bonsai/validation",
+  "description": "Combinators for validating data",
+  "dependencies": {
+    "@bonsai/either": "*"
+  }
+}

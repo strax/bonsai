@@ -1,0 +1,18 @@
+{
+  "name": "@bonsai/either",
+  "version": "0.0.1",
+  "description": "Either ADT for TypeScript",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "author": {
+    "name": "Sami Kukkonen",
+    "email": "sami@samikukkonen.fi"
+  },
+  "dependencies": {
+    "@bonsai/core": "*"
+  },
+  "devDependencies": {
+    "typescript": "*"
+  }
+}

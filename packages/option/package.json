@@ -1,0 +1,15 @@
+{
+  "name": "@bonsai/option",
+  "version": "0.0.1",
+  "description": "Option ADT for TypeScript",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "author": {
+    "name": "Sami Kukkonen",
+    "email": "sami@samikukkonen.fi"
+  },
+  "dependencies": {
+    "@bonsai/core": "*"
+  }
+}

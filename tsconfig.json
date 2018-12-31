@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "commonjs",
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "esModuleInterop": true,
+    "strictBindCallApply": false,
+    "moduleResolution": "node",
+    "experimentalDecorators": true
+  },
+  "references": [
+    {
+      "path": "packages/core"
+    },
+    {
+      "path": "packages/option"
+    },
+    {
+      "path": "packages/optics"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "@bonsai/core",
+  "version": "0.0.1",
+  "description": "Core types and functions for Bonsai",
+  "license": "MIT",
+  "dependencies": {
+    "@bonsai/tuples": "*"
+  },
+  "devDependencies": {
+    "typescript": "*"
+  }
+}
