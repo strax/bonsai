@@ -3,14 +3,14 @@ import { Kind, Type1 } from "./kinds"
 
 declare const enum Witness {}
 
-export class Const<A, B> implements Functor<ConstK<A>, B> {
+export class Const<A, B = A> implements Functor<ConstK<A>> {
   constructor(private value: A) {}
 
   get(): A {
     return this.value
   }
 
-  [Functor.map]<C>(f: (b: B) => C): Const<A, C> {
+  [Functor.map]<B, C>(this: Const<A, B>, f: (b: B) => C): Const<A, C> {
     return new Const(this.get())
   }
 }

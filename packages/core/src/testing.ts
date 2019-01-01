@@ -1,4 +1,4 @@
-import { Kind, TypeWitness } from "./kinds"
+import { Kind, TypeWitness, Type1 } from "./kinds"
 import { Identity } from "./Identity"
 import { Functor, fmap } from "./Functor"
 import { Const } from "./Const"
@@ -6,7 +6,7 @@ import { IO } from "./IO"
 import { composeK } from "./Monad"
 
 // This works over all functors
-function mapToString<F extends Kind>(fa: Functor<F, number>) {
+function mapToString<F extends Kind>(fa: Functor<F> & Type1<F, number>) {
   return fmap(fa, String)
 }
 
@@ -26,6 +26,8 @@ function mapToString<F extends Kind>(fa: Functor<F, number>) {
 const arrayString = mapToString([1, 2, 3])
 
 const n = mapToString(new Const(2))
+
+const idString = mapToString(new Identity(2))
 
 declare const id: Identity<string>
 

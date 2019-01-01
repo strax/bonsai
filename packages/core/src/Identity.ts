@@ -7,7 +7,7 @@ import { Applicative } from "./Applicative"
 // unique symbols need an extra type alias declaration compared to this
 declare const enum Witness {}
 
-export class Identity<A> implements Applicative<IdentityK, A> {
+export class Identity<A> implements Applicative<IdentityK> {
   static [Applicative.pure]<A>(a: A): Identity<A> {
     return new Identity(a)
   }
@@ -16,11 +16,11 @@ export class Identity<A> implements Applicative<IdentityK, A> {
   //   return new Identity(f(this.value))
   // }
 
-  [Functor.map]<B>(f: (a: A) => B) {
+  [Functor.map]<A, B>(this: Identity<A>, f: (a: A) => B) {
     return new Identity(f(this.value))
   }
 
-  [Applicative.ap]<B>(other: Identity<(a: A) => B>): Identity<B> {
+  [Applicative.ap]<A, B>(this: Identity<A>, other: Identity<(a: A) => B>): Identity<B> {
     return other[Functor.map](f => f(this.value))
   }
 

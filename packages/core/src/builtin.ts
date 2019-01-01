@@ -13,12 +13,12 @@ function inject(target: object, key: symbol, value: unknown) {
 }
 
 // #region Array :: * -> *
-namespace ArrayK {
+namespace Array$Kind {
   export const enum T {}
 }
 
-interface ArrayK extends Kind<ArrayK.T> {
-  [Kind.refine]: this extends Type1<ArrayK, infer A> ? Array<A> : never
+interface Array$Kind extends Kind<Array$Kind.T> {
+  [Kind.refine]: this extends Type1<Array$Kind, infer A> ? Array<A> : never
 }
 
 declare global {
@@ -26,33 +26,35 @@ declare global {
     [Applicative.pure]<A>(a: A): Array<A>
   }
 
-  interface Array<T> extends Type1<ArrayK, T> {
+  interface Array<T> extends Type1<Array$Kind, T> {
     constructor: ArrayConstructor
   }
 
-  interface Array<T> extends Functor<ArrayK, T>, Applicative<ArrayK, T>, Monad<ArrayK, T> {}
+  interface Array<T> extends Monad<Array$Kind> {}
 }
 
-function Array$Functor$map<A, B>(this: Array<A>, f: (a: A) => B): Array<B> {
-  return this.map(a => f(a))
+namespace ArrayExtensions {
+  export function map<A, B>(this: Array<A>, f: (a: A) => B): Array<B> {
+    return this.map(a => f(a))
+  }
+
+  export function pure<A>(a: A): Array<A> {
+    return Array.of(a)
+  }
+
+  export function ap<A, B>(this: Array<A>, fab: Array<(a: A) => B>): Array<B> {
+    return this.flatMap(a => fab.map(f => f(a)))
+  }
+
+  export function flatMap<A, B>(this: Array<A>, f: (a: A) => Array<B>): Array<B> {
+    return this.flatMap(a => f(a))
+  }
 }
 
-function Array$Applicative$pure<A>(a: A): Array<A> {
-  return Array.of(a)
-}
+inject(Array.prototype, Functor.map, ArrayExtensions.map)
 
-function Array$Applicative$ap<A, B>(this: Array<A>, fab: Array<(a: A) => B>): Array<B> {
-  return this.flatMap(a => fab.map(f => f(a)))
-}
+inject(Array, Applicative.pure, ArrayExtensions.pure)
+inject(Array.prototype, Applicative.ap, ArrayExtensions.ap)
 
-function Array$Monad$flatMap<A, B>(this: Array<A>, f: (a: A) => Array<B>): Array<B> {
-  return this.flatMap(a => f(a))
-}
-
-inject(Array.prototype, Functor.map, Array$Functor$map)
-
-inject(Array, Applicative.pure, Array$Applicative$pure)
-inject(Array.prototype, Applicative.ap, Array$Applicative$ap)
-
-inject(Array.prototype, Monad.flatMap, Array$Monad$flatMap)
+inject(Array.prototype, Monad.flatMap, ArrayExtensions.flatMap)
 // #endregion

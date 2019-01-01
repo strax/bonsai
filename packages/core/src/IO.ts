@@ -6,7 +6,7 @@ import { id } from "./utils"
 
 declare const enum IO$Witness {}
 
-export class IO<A> implements Monad<IO$Kind, A> {
+export class IO<A> implements Monad<IO$Kind> {
   static [Applicative.pure]<A>(a: A): IO<A> {
     return new IO(() => a)
   }
@@ -17,15 +17,15 @@ export class IO<A> implements Monad<IO$Kind, A> {
     return this.effect()
   }
 
-  [Functor.map]<B>(f: (a: A) => B) {
+  [Functor.map]<A, B>(this: IO<A>, f: (a: A) => B) {
     return new IO(() => f(this.effect()))
   }
 
-  [Applicative.ap]<B>(fab: IO<(a: A) => B>) {
+  [Applicative.ap]<A, B>(this: IO<A>, fab: IO<(a: A) => B>) {
     return this[Functor.map](a => fab.unsafePerform()(a))
   }
 
-  [Monad.flatMap]<B>(f: (a: A) => IO<B>) {
+  [Monad.flatMap]<A, B>(this: IO<A>, f: (a: A) => IO<B>) {
     return new IO(() => f(this.unsafePerform()).unsafePerform())
   }
 
