@@ -1,12 +1,12 @@
 import { Functor } from "./Functor"
-import { Repr, Type1 } from "./kinds"
+import { Kind, Type1, Refine } from "./kinds"
 
-export interface Applicative<F extends Repr, A> extends Functor<F, A> {
+export interface Applicative<F extends Kind, A> extends Functor<F, A> {
   constructor: {
-    [Applicative.pure]<A>(a: A): Type1.Prj<F, A>
+    [Applicative.pure]<A>(a: A): Refine<F, A>
   }
 
-  [Applicative.ap]<B>(fab: Type1<F, (a: A) => B>): Type1.Prj<F, B>
+  [Applicative.ap]<B>(fab: Type1<F, (a: A) => B>): Refine<F, B>
 }
 
 export namespace Applicative {

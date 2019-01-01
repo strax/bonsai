@@ -1,9 +1,10 @@
-import { Repr, Type1, Type2, TypeWitness } from "./kinds"
+import { Kind, TypeWitness, Type1 } from "./kinds"
 import { Functor } from "./Functor"
 import { Applicative } from "./Applicative"
+import { Monad } from "./Monad"
 
-function alias(target: object, key: symbol, value: unknown) {
-  Object.defineProperty(target, key, {
+function inject(target: object, key: symbol, value: unknown) {
+  Reflect.defineProperty(target, key, {
     configurable: false,
     enumerable: false,
     writable: false,
@@ -16,8 +17,8 @@ namespace ArrayK {
   export const enum T {}
 }
 
-interface ArrayK extends Repr<ArrayK.T> {
-  [Repr.λ]: this extends Type1<ArrayK, infer A> ? Array<A> : never
+interface ArrayK extends Kind<ArrayK.T> {
+  [Kind.refine]: this extends Type1<ArrayK, infer A> ? Array<A> : never
 }
 
 declare global {
@@ -29,19 +30,29 @@ declare global {
     constructor: ArrayConstructor
   }
 
-  interface Array<T> extends Functor<ArrayK, T>, Applicative<ArrayK, T> {}
+  interface Array<T> extends Functor<ArrayK, T>, Applicative<ArrayK, T>, Monad<ArrayK, T> {}
 }
 
-alias(Array.prototype, Functor.map, Array.prototype.map)
+function Array$Functor$map<A, B>(this: Array<A>, f: (a: A) => B): Array<B> {
+  return this.map(a => f(a))
+}
 
-alias(Array, Applicative.pure, Array.of)
-Array.prototype[Applicative.ap] = function Array$Applicative$ap<A, B>(
-  this: Array<A>,
-  fab: Array<(a: A) => B>
-): Array<B> {
+function Array$Applicative$pure<A>(a: A): Array<A> {
+  return Array.of(a)
+}
+
+function Array$Applicative$ap<A, B>(this: Array<A>, fab: Array<(a: A) => B>): Array<B> {
   return this.flatMap(a => fab.map(f => f(a)))
 }
-// #endregion
 
-// #region String
+function Array$Monad$flatMap<A, B>(this: Array<A>, f: (a: A) => Array<B>): Array<B> {
+  return this.flatMap(a => f(a))
+}
+
+inject(Array.prototype, Functor.map, Array$Functor$map)
+
+inject(Array, Applicative.pure, Array$Applicative$pure)
+inject(Array.prototype, Applicative.ap, Array$Applicative$ap)
+
+inject(Array.prototype, Monad.flatMap, Array$Monad$flatMap)
 // #endregion

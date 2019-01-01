@@ -1,5 +1,5 @@
 import { Functor } from "./Functor"
-import { Repr, Type1 } from "./kinds"
+import { Kind, Type1 } from "./kinds"
 
 declare const enum Witness {}
 
@@ -15,8 +15,8 @@ export class Const<A, B> {
   }
 }
 
-export interface ConstK<A> extends Repr<[Witness, A]> {
-  [Repr.λ]: this extends Type1<ConstK<A>, infer B> ? Const<A, B> : never
+interface ConstK<A> extends Kind<[Witness, A]> {
+  [Kind.refine]: this extends Type1<ConstK<A>, infer B> ? Const<A, B> : never
 }
 
 export interface Const<A, B> extends Type1<ConstK<A>, B> {}

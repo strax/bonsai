@@ -1,17 +1,13 @@
-import { Repr, Type1 } from "./kinds"
+import { Kind, Type1, Refine } from "./kinds"
 
-export interface Functor<F extends Repr, A> extends Type1<F, A> {
-  [Functor.map]<B>(f: (a: A) => B): Type1.Prj<F, B>
+export interface Functor<F extends Kind, A> extends Type1<F, A> {
+  [Functor.map]<B>(f: (a: A) => B): Refine<F, B>
 }
 
 export namespace Functor {
   export const map = Symbol("Functor.map")
 }
 
-export function fmap<F extends Repr, A, B>(fa: Functor<F, A>, f: (a: A) => B): Type1.Prj<F, B> {
+export function fmap<F extends Kind, A, B>(fa: Functor<F, A>, f: (a: A) => B) {
   return fa[Functor.map](f)
-}
-
-export function voidRight<F extends Repr, A, B>(a: A, fb: Functor<F, B>): Type1.Prj<F, A> {
-  return fmap(fb, _ => a)
 }
