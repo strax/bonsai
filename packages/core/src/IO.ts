@@ -11,8 +11,6 @@ export class IO<A> implements Monad<IO$Kind, A> {
     return new IO(() => a)
   }
 
-  "constructor": typeof IO
-
   constructor(private effect: () => A) {}
 
   unsafePerform(): A {
@@ -36,8 +34,12 @@ export class IO<A> implements Monad<IO$Kind, A> {
   }
 }
 
-export interface IO<A> extends Type1<IO$Kind, A> {}
+export interface IO<A> extends Type1<IO$Kind, A> {
+  constructor: typeof IO
+}
 
 interface IO$Kind extends Kind<IO$Witness> {
   [Kind.refine]: this extends Type1<IO$Kind, infer A> ? IO<A> : never
 }
+
+const ix = new IO(() => 2)[Monad.flatMap](x => new IO(() => console.log(x)))

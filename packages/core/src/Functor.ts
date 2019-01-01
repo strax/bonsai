@@ -1,7 +1,7 @@
 import { Kind, Type1, Refine } from "./kinds"
 
 export interface Functor<F extends Kind, A> extends Type1<F, A> {
-  [Functor.map]<B>(f: (a: A) => B): Refine<F, B>
+  [Functor.map]<B>(f: (a: A) => B): Refine<Type1<F, B>>
 }
 
 export namespace Functor {

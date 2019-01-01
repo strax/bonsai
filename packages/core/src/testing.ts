@@ -1,4 +1,4 @@
-import { Kind } from "./kinds"
+import { Kind, TypeWitness } from "./kinds"
 import { Identity } from "./Identity"
 import { Functor, fmap } from "./Functor"
 import { Const } from "./Const"
@@ -25,7 +25,7 @@ function mapToString<F extends Kind>(fa: Functor<F, number>) {
 
 const arrayString = mapToString([1, 2, 3])
 
-const n = mapToString(new Const(2)).get()
+const n = mapToString(new Const(2))
 
 declare const id: Identity<string>
 

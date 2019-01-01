@@ -18,7 +18,12 @@ export interface Type1<F extends Kind, A> {
   [TypeWitness]: [F, A]
 }
 
-export type Refine<F extends Kind, A> = (F & Type1<F, A>)[Kind.refine]
+// export type Refine<F extends Kind, A> = (F & Type1<F, A>)[Kind.refine]
+
+// Extracts the `F` component of the type witness tuple of `Type1`
+type ToKind<T extends Type1<any, any>> = T[typeof TypeWitness][0]
+
+export type Refine<T extends Type1<any, any>> = (ToKind<T> & T)[Kind.refine]
 
 /**
  * @internal

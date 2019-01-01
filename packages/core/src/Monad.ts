@@ -2,8 +2,8 @@ import { Kind, Type1, Refine } from "./kinds"
 import { Applicative } from "./Applicative"
 
 export interface Monad<M extends Kind, A> extends Applicative<M, A> {
-  [Monad.flatMap]<B>(f: (a: A) => Type1<M, B>): Refine<M, B>
-  [Monad.flatten]<A>(this: Type1<M, Type1<M, A>>): Refine<M, A>
+  [Monad.flatMap]<B>(f: (a: A) => Type1<M, B>): Refine<Type1<M, B>>
+  [Monad.flatten]<A>(this: Type1<M, Type1<M, A>>): Refine<Type1<M, A>>
 }
 
 export namespace Monad {

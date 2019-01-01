@@ -3,7 +3,7 @@ import { Kind, Type1 } from "./kinds"
 
 declare const enum Witness {}
 
-export class Const<A, B> {
+export class Const<A, B> implements Functor<ConstK<A>, B> {
   constructor(private value: A) {}
 
   get(): A {
