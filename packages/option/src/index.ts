@@ -1,23 +1,47 @@
-import { isNot, id } from "@bonsai/core"
+import { Kind, id, Type1, Functor, Monad, Applicative } from "@bonsai/core"
 
-abstract class Option<A> {
+declare const enum Witness {}
+interface Option$Kind extends Kind<Witness> {
+  [Kind.refine]: this extends Type1<Option$Kind, infer A> ? Option<A> : never
+}
+
+const isNot = <A>(a: A) => <B>(b: A | B): b is Exclude<B, A> => b !== a
+
+abstract class Option<A> implements Monad<Option$Kind> {
   abstract get(): A
   abstract isEmpty(): boolean
+
+  static [Applicative.pure]<A>(a: A): Option<A> {
+    return Option.pure(a)
+  }
+
+  [Functor.map]<A, B>(this: Option<A>, f: (a: A) => B): Option<B> {
+    return this.fold(a => Option.pure(f(a)), Option.empty)
+  }
+
+  [Applicative.ap]<A, B>(this: Option<A>, fab: Option<(a: A) => B>): Option<B> {
+    return fab.flatMap(f => this.map(a => f(a)))
+  }
+
+  [Monad.flatMap]<A, B>(this: Option<A>, f: (a: A) => Option<B>): Option<B> {
+    return this.fold(f, Option.empty)
+  }
+
+  [Monad.flatten]<A>(this: Option<Option<A>>): Option<A> {
+    return this.flatMap(id)
+  }
+
+  readonly map = this[Functor.map]
+  readonly ap = this[Applicative.ap]
+  readonly flatMap = this[Monad.flatMap]
+  readonly flatten = this[Monad.flatten]
 
   fold<B>(f: (a: A) => B, b: () => B): B {
     return this.isEmpty() ? b() : f(this.get())
   }
 
-  map<B>(f: (a: A) => B): Option<B> {
-    return this.fold(a => Option.pure(f(a)), Option.empty)
-  }
-
   mapOpt<B>(f: (a: A) => B | null | undefined): Option<B> {
     return this.flatMap(a => Option.option(f(a)))
-  }
-
-  flatMap<B>(f: (a: A) => Option<B>): Option<B> {
-    return this.fold(f, Option.empty)
   }
 
   orElseL<B>(this: Option<B>, fb: () => Option<B>): Option<B> {
@@ -45,6 +69,10 @@ abstract class Option<A> {
   filter(f: (a: A) => boolean): Option<A> {
     return this.flatMap(a => (f(a) ? Option.pure(a) : Option.empty()))
   }
+}
+
+interface Option<A> extends Type1<Option$Kind, A> {
+  constructor: typeof Option
 }
 
 export class Some<A> extends Option<A> {
