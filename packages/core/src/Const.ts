@@ -3,7 +3,7 @@ import { Kind, Type1 } from "./kinds"
 
 declare const enum Witness {}
 
-export class Const<A, B = A> implements Functor<ConstK<A>> {
+export class Const<A, B = A> implements Functor<Const$Kind<A>> {
   constructor(private value: A) {}
 
   get(): A {
@@ -15,8 +15,8 @@ export class Const<A, B = A> implements Functor<ConstK<A>> {
   }
 }
 
-interface ConstK<A> extends Kind<[Witness, A]> {
-  [Kind.refine]: this extends Type1<ConstK<A>, infer B> ? Const<A, B> : never
-}
+export interface Const<A, B> extends Type1<Const$Kind<A>, B> {}
 
-export interface Const<A, B> extends Type1<ConstK<A>, B> {}
+interface Const$Kind<A> extends Kind<[Witness, A]> {
+  [Kind.refine]: this extends Type1<Const$Kind<A>, infer B> ? Const<A, B> : never
+}
