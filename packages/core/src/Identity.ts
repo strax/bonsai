@@ -12,7 +12,9 @@ export class Identity<A> implements Applicative<Identity$Kind> {
     return this.pure(a)
   }
 
-  static readonly pure = Identity[Applicative.pure]
+  static pure<A>(a: A): Identity<A> {
+    return Identity[Applicative.pure](a)
+  }
 
   readonly map = this[Functor.map]
   readonly ap = this[Applicative.ap];

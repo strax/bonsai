@@ -1,0 +1,16 @@
+{
+  "name": "@bonsai/bonsai-fluture",
+  "version": "0.0.1",
+  "description": "Fluture integration with Bonsai",
+  "license": "MIT",
+  "peerDependencies": {
+    "@bonsai/core": "*",
+    "fluture": "*"
+  },
+  "devDependencies": {
+    "fluture": "10.3.0",
+    "@bonsai/core": "*",
+    "typescript": "*",
+    "ts-node": "7.0.1"
+  }
+}

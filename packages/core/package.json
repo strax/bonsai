@@ -3,6 +3,8 @@
   "version": "0.0.1",
   "description": "Core types and functions for Bonsai",
   "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "dependencies": {
     "@bonsai/tuples": "*"
   },
