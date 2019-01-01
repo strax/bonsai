@@ -9,12 +9,13 @@ declare const enum Witness {}
 
 export class Identity<A> implements Applicative<Identity$Kind> {
   static [Applicative.pure]<A>(a: A): Identity<A> {
-    return new Identity(a)
+    return this.pure(a)
   }
 
-  // map<B>(f: (a: A) => B): Identity<B> {
-  //   return new Identity(f(this.value))
-  // }
+  static readonly pure = Identity[Applicative.pure]
+
+  readonly map = this[Functor.map]
+  readonly ap = this[Applicative.ap];
 
   [Functor.map]<A, B>(this: Identity<A>, f: (a: A) => B) {
     return new Identity(f(this.value))

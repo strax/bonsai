@@ -10,6 +10,8 @@ export class Const<A, B = A> implements Functor<Const$Kind<A>> {
     return this.value
   }
 
+  readonly map = this[Functor.map];
+
   [Functor.map]<B, C>(this: Const<A, B>, f: (b: B) => C): Const<A, C> {
     return new Const(this.get())
   }

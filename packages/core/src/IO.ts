@@ -11,22 +11,31 @@ export class IO<A> implements Monad<IO$Kind> {
     return new IO(() => a)
   }
 
-  constructor(private effect: () => A) {}
+  // #region Aliases
+  static readonly pure = IO[Applicative.pure]
 
-  unsafePerform(): A {
-    return this.effect()
+  readonly map = this[Functor.map]
+  readonly ap = this[Applicative.ap]
+  readonly flatMap = this[Monad.flatMap]
+  readonly flatten = this[Monad.flatten]
+  // #endregion
+
+  constructor(private run: () => A) {}
+
+  unsafeRun(): A {
+    return this.run()
   }
 
   [Functor.map]<A, B>(this: IO<A>, f: (a: A) => B) {
-    return new IO(() => f(this.effect()))
+    return new IO(() => f(this.run()))
   }
 
   [Applicative.ap]<A, B>(this: IO<A>, fab: IO<(a: A) => B>) {
-    return this[Functor.map](a => fab.unsafePerform()(a))
+    return this[Functor.map](a => fab.unsafeRun()(a))
   }
 
   [Monad.flatMap]<A, B>(this: IO<A>, f: (a: A) => IO<B>) {
-    return new IO(() => f(this.unsafePerform()).unsafePerform())
+    return new IO(() => f(this.unsafeRun()).unsafeRun())
   }
 
   [Monad.flatten]<A>(this: IO<IO<A>>): IO<A> {
