@@ -11,5 +11,8 @@
   },
   "dependencies": {
     "@bonsai/core": "*"
+  },
+  "devDependencies": {
+    "typescript": "*"
   }
 }

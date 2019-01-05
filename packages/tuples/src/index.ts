@@ -31,4 +31,6 @@ namespace Tuple {
   export type Append<T extends Tuple, A> = RotateLeft<Prepend<A, T>>
 }
 
+type z = Tuple.Zip<[1, 2, 3], [4, 5, 5]>
+
 export default Tuple

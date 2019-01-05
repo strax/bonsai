@@ -15,6 +15,7 @@ export namespace Kind {
 }
 
 export interface Type1<F extends Kind, A> {
+  constructor: F
   [TypeWitness]: [F, A]
 }
 
@@ -25,7 +26,11 @@ export { Type1 as λ }
 // Extracts the `F` component of the type witness tuple of `Type1`
 type ToKind<T extends Type1<any, any>> = T[typeof TypeWitness][0]
 
-export type Refine<T extends Type1<any, any>> = (ToKind<T> & T)[Kind.refine]
+type Narrow<A, B> = A extends B ? A : A & B
+
+export type Refine<T extends Type1<any, any>> = [T] extends [T] ? Narrow<(ToKind<T> & T)[Kind.refine], T> : never
+
+export type Fix<F extends Kind, A> = Refine<Type1<F, A>>
 
 /**
  * @internal

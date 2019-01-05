@@ -41,5 +41,5 @@ export interface Identity<A> extends Type1<Identity$Kind, A> {
  * `Type1<IdentityK, A>` to `Identity<A>`.
  */
 interface Identity$Kind extends Kind<Witness> {
-  [Kind.refine]: this extends Type1<Identity$Kind, infer A> ? Identity<A> : never
+  [Kind.refine]: [this] extends [Type1<Identity$Kind, infer A>] ? Identity<A> : never
 }

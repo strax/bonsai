@@ -48,7 +48,7 @@ export interface IO<A> extends Type1<IO$Kind, A> {
 }
 
 interface IO$Kind extends Kind<IO$Witness> {
-  [Kind.refine]: this extends Type1<IO$Kind, infer A> ? IO<A> : never
+  [Kind.refine]: [this] extends [Type1<IO$Kind, infer A>] ? IO<A> : never
 }
 
 const ix = new IO(() => 2)[Monad.flatMap](x => new IO(() => console.log(x)))

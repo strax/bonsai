@@ -20,5 +20,5 @@ export class Const<A, B = A> implements Functor<Const$Kind<A>> {
 export interface Const<A, B> extends Type1<Const$Kind<A>, B> {}
 
 interface Const$Kind<A> extends Kind<[Witness, A]> {
-  [Kind.refine]: this extends Type1<Const$Kind<A>, infer B> ? Const<A, B> : never
+  [Kind.refine]: [this] extends [Type1<Const$Kind<A>, infer B>] ? Const<A, B> : never
 }

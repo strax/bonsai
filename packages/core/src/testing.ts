@@ -1,6 +1,6 @@
 import "./extensions"
 
-import { Kind, λ } from "./kinds"
+import { Kind, λ, Fix } from "./kinds"
 import { Identity } from "./Identity"
 import { Functor, fmap } from "./Functor"
 import { Const } from "./Const"
@@ -11,6 +11,16 @@ import { composeK } from "./Monad"
 function mapToString<F extends Kind>(fa: Functor<F> & λ<F, number>) {
   return fmap(fa, String)
 }
+
+function inj<F extends Kind, A>(fa: Fix<F, A>): Fix<F, A> {
+  return fa
+}
+
+function mapToString2<F extends Kind>(fa: Functor<F> & Fix<F, number>) {
+  return fmap(fmap(fa, String), parseInt)
+}
+
+mapToString2(new Identity(2))
 
 // function inj1<F extends Kind, A>(fa: Type1<F, A>): Type1<F, A> {
 //   return fa
