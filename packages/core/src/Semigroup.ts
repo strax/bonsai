@@ -3,5 +3,5 @@ export namespace Semigroup {
 }
 
 export interface Semigroup<A> {
-  [Semigroup.concat](this: A, a1: A): A
+  [Semigroup.concat](a0: A, a1: A): A
 }

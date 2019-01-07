@@ -1,45 +1,32 @@
-import { Kind, Type1, Refine } from "./kinds"
+import { Kind1, Type1 } from "./kinds"
 import { Functor } from "./Functor"
-import { Applicative } from "./Applicative"
 
 // Unique tag to make `IdentityK` nominal
 // This is as good as it gets to generate unique uninhabitated types;
 // unique symbols need an extra type alias declaration compared to this
 declare const enum Witness {}
 
-export class Identity<A> implements Applicative<Identity$Kind> {
-  static [Applicative.pure]<A>(a: A): Identity<A> {
-    return this.pure(a)
-  }
+@protocol<Functor<IdentityConstructor>>()
+export class Identity<A> {
+  static [Kind1.kind]: Identity$λ
 
-  static pure<A>(a: A): Identity<A> {
-    return Identity[Applicative.pure](a)
-  }
-
-  readonly map = this[Functor.map]
-  readonly ap = this[Applicative.ap];
-
-  [Functor.map]<A, B>(this: Identity<A>, f: (a: A) => B) {
-    return new Identity(f(this.value))
-  }
-
-  [Applicative.ap]<A, B>(this: Identity<A>, other: Identity<(a: A) => B>): Identity<B> {
-    return other[Functor.map](f => f(this.value))
+  static [Functor.map]<A, B>(fa: Identity<A>, f: (a: A) => B): Identity<B> {
+    return new Identity(f(fa.value))
   }
 
   constructor(private value: A) {}
 }
 
+type IdentityConstructor = typeof Identity
+
 // Annotate Identity to be isomorphic with `Type1<IdentityK, A>`;
 // type merging is performed to avoid having to declare `Type1` members in the class
-export interface Identity<A> extends Type1<Identity$Kind, A> {
-  constructor: typeof Identity
-}
+export interface Identity<A> extends Type1<IdentityConstructor, A> {}
 
 /**
  * This is the generic representation of Identity<?> that allows us to convert from
  * `Type1<IdentityK, A>` to `Identity<A>`.
  */
-interface Identity$Kind extends Kind<Witness> {
-  [Kind.refine]: [this] extends [Type1<Identity$Kind, infer A>] ? Identity<A> : never
+interface Identity$λ extends Kind1<Witness> {
+  [Kind1.refine]: this extends Type1<IdentityConstructor, infer A> ? Identity<A> : never
 }

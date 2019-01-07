@@ -1,17 +1,13 @@
-import { Kind, Type1, Refine, Fix } from "./kinds"
+import { Kind1, Fix, HasKind1 } from "./kinds"
 
-export interface Functor<F extends Kind> {
-  [Functor.map]<A, B>(this: Fix<F, A>, f: (a: A) => B): Fix<F, B>
+export interface Functor<F extends Functor<F>> extends HasKind1 {
+  [Functor.map]<A, B>(fa: Fix<F, A>, f: (a: A) => B): Fix<F, B>
 }
 
 export namespace Functor {
   export const map = Symbol("Functor.map")
 }
 
-export function fmap<F extends HasFunctor<F>, A, B>(fa: Functor<F> & Fix<F, A>, f: (a: A) => B): Fix<F, B> {
-  return fa[Functor.map](f)
+export function fmap<F extends Functor<F>, A, B>(fa: Fix<F, A>, f: (a: A) => B): Fix<F, B> {
+  return fa.constructor[Functor.map](fa, f)
 }
-
-// export function test<F extends Kind, A>(fa: Functor<F> & Type1<F, A>) {
-//   return fmap(fmap(fa, () => 2), String)
-// }

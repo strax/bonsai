@@ -1,23 +1,43 @@
-import { Type1, Kind } from "./kinds"
+import { Type1, Kind1, Fix, ToKind } from "./kinds"
 import { Monad } from "./Monad"
 import { Functor } from "./Functor"
-import { Applicative } from "./Applicative"
+import { Applicative, pure } from "./Applicative"
 import { id } from "./utils"
 
 declare const enum IO$Witness {}
 
-export class IO<A> implements Monad<IO$Kind> {
-  static [Applicative.pure]<A>(a: A): IO<A> {
+function bind1<Args extends Array<any>, A, R>(f: (a1: A, ...args: Args) => R, a: A): (...args: Args) => R {
+  return (...args) => f(a, ...args)
+}
+
+@protocol<Monad<IOConstructor>>()
+export class IO<A> {
+  static [Kind1.kind]: IO$λ
+
+  static pure<A>(a: A): IO<A> {
     return new IO(() => a)
   }
 
-  // #region Aliases
-  static readonly pure = IO[Applicative.pure]
+  static [Applicative.pure]<A>(a: A): IO<A> {
+    return this.pure(a)
+  }
 
-  readonly map = this[Functor.map]
-  readonly ap = this[Applicative.ap]
-  readonly flatMap = this[Monad.flatMap]
-  readonly flatten = this[Monad.flatten]
+  map<B>(f: (a: A) => B): IO<B> {
+    return new IO(() => f(this.run()))
+  }
+
+  ap<B>(fab: IO<(a: A) => B>): IO<B> {
+    return this.map(a => fab.unsafeRun()(a))
+  }
+
+  flatMap<B>(f: (a: A) => IO<B>): IO<B> {
+    return new IO(() => f(this.unsafeRun()).unsafeRun())
+  }
+
+  flatten<A>(this: IO<IO<A>>): IO<A> {
+    return this.flatMap(id)
+  }
+
   // #endregion
 
   constructor(private run: () => A) {}
@@ -26,29 +46,25 @@ export class IO<A> implements Monad<IO$Kind> {
     return this.run()
   }
 
-  [Functor.map]<A, B>(this: IO<A>, f: (a: A) => B) {
-    return new IO(() => f(this.run()))
+  static [Functor.map]<A, B>(io: IO<A>, f: (a: A) => B) {
+    return io.map(f)
   }
 
-  [Applicative.ap]<A, B>(this: IO<A>, fab: IO<(a: A) => B>) {
-    return this[Functor.map](a => fab.unsafeRun()(a))
+  static [Applicative.ap]<A, B>(io: IO<A>, fab: IO<(a: A) => B>) {
+    return io.ap(fab)
   }
 
-  [Monad.flatMap]<A, B>(this: IO<A>, f: (a: A) => IO<B>) {
-    return new IO(() => f(this.unsafeRun()).unsafeRun())
-  }
-
-  [Monad.flatten]<A>(this: IO<IO<A>>): IO<A> {
-    return this[Monad.flatMap](id)
+  static [Monad.flatMap]<A, B>(io: IO<A>, f: (a: A) => IO<B>) {
+    return io.flatMap(f)
   }
 }
 
-export interface IO<A> extends Type1<IO$Kind, A> {
-  constructor: typeof IO
+type IOConstructor = typeof IO
+
+export interface IO<A> extends Type1<IOConstructor, A> {}
+
+interface IO$λ extends Kind1<IO$Witness> {
+  [Kind1.refine]: this extends Type1<IOConstructor, infer A> ? IO<A> : never
 }
 
-interface IO$Kind extends Kind<IO$Witness> {
-  [Kind.refine]: [this] extends [Type1<IO$Kind, infer A>] ? IO<A> : never
-}
-
-const ix = new IO(() => 2)[Monad.flatMap](x => new IO(() => console.log(x)))
+const x = pure(IO)(2)
