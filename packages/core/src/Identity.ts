@@ -1,42 +1,58 @@
-import { Kind1, Type1 } from "./kinds"
-import { Functor } from "./Functor"
-import { Applicative } from "./Applicative"
+import { Kind1, Type1, Fix } from "./kinds"
+import { Functor, FunctorInstance } from "./Functor"
+import { Applicative, ApplicativeInstance } from "./Applicative"
 
 // Unique tag to make `IdentityK` nominal
 // This is as good as it gets to generate unique uninhabitated types;
 // unique symbols need an extra type alias declaration compared to this
 declare const enum Witness {}
 
-@protocol<Applicative<IdentityConstructor>>()
-export class Identity<A> {
-  static [Kind1.kind]: Identity$λ
-
-  static [Functor.map]<A, B>(fa: Identity<A>, f: (a: A) => B): Identity<B> {
-    return new Identity(f(fa.value))
+namespace IdentityFunctor {
+  export function map<A, B>(fa: Identity<A>, f: (a: A) => B): Identity<B> {
+    return new Identity(f(fa.get()))
   }
+}
 
-  static [Applicative.pure]<A>(a: A): Identity<A> {
+namespace IdentityApplicative {
+  export const functor = IdentityFunctor
+
+  export function pure<A>(a: A): Identity<A> {
     return new Identity(a)
   }
 
-  static [Applicative.ap]<A, B>(fa: Identity<A>, ff: Identity<(a: A) => B>): Identity<B> {
-    const f = ff.value
-    return new Identity(f(fa.value))
+  export function ap<A, B>(fa: Identity<A>, ff: Identity<(a: A) => B>): Identity<B> {
+    const f = ff.get()
+    return new Identity(f(fa.get()))
   }
-
-  constructor(private value: A) {}
 }
 
 type IdentityConstructor = typeof Identity
-
-// Annotate Identity to be isomorphic with `Type1<IdentityK, A>`;
-// type merging is performed to avoid having to declare `Type1` members in the class
-export interface Identity<A> extends Type1<IdentityConstructor, A> {}
-
 /**
  * This is the generic representation of Identity<?> that allows us to convert from
  * `Type1<IdentityK, A>` to `Identity<A>`.
  */
-interface Identity$λ extends Kind1<Witness> {
-  [Kind1.refine]: this extends Type1<IdentityConstructor, infer A> ? Identity<A> : never
+interface IdentityKind extends Kind1<Witness>, IdentityConstructor {
+  [Kind1.refine]: this extends Type1<IdentityKind, infer A> ? Identity<A> : never
 }
+
+export class Identity<A> {
+  static readonly [Kind1.kind] = (Identity as unknown) as IdentityKind
+  static readonly [Functor.instance] = IdentityFunctor as Functor<IdentityKind>
+  static readonly [Applicative.instance] = IdentityApplicative;
+
+  readonly [Functor.instance] = IdentityFunctor as Functor<IdentityKind>;
+  readonly [Applicative.instance] = IdentityApplicative;
+  readonly [Kind1.kind] = Identity[Kind1.kind]
+
+  constructor(private value: A) {}
+
+  get(): A {
+    return this.value
+  }
+}
+
+// Annotate Identity to be isomorphic with `Type1<IdentityK, A>`;
+// type merging is performed to avoid having to declare `Type1` members in the class
+export interface Identity<A> extends Type1<IdentityKind, A> {}
+
+type idt = Fix<IdentityKind, string>

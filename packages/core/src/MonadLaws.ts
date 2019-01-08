@@ -1,23 +1,27 @@
 import { Arbitrary, property } from "fast-check"
-import { Monad, chain } from "./Monad"
-import { Applicative, pure } from "./Applicative"
-import { Kind1, Fix } from "./kinds"
+import { Monad, MonadInstance, IsMonad } from "./Monad"
+import { pure } from "./Applicative"
+import { Kind1, Fix, HasKind1 } from "./kinds"
 
 export namespace MonadLaws {
-  function LeftIdentity<M extends Monad<M>, A, B>(M: M, arbA: Arbitrary<A>, arbF: Arbitrary<(a: A) => Fix<M, B>>) {
+  function LeftIdentity<M extends IsMonad, A, B>(
+    M: HasKind1<M>,
+    arbA: Arbitrary<A>,
+    arbF: Arbitrary<(a: A) => Fix<M, B>>
+  ) {
     return property(arbA, arbF, (a, f) => {
-      return chain(pure(M)(a), f) === f(a)
+      return Monad(M).flatMap(pure(M)(a), f) === f(a)
     })
   }
 
-  function RightIdentity<M extends Monad<M>, A>(M: M, arbMA: Arbitrary<Fix<M, A>>) {
+  function RightIdentity<M extends IsMonad, A>(M: HasKind1<M>, arbMA: Arbitrary<Fix<M, A>>) {
     return property(arbMA, ma => {
-      return chain(ma, pure(M)) === ma
+      return Monad(M).flatMap(ma, pure(M)) === ma
     })
   }
 
   // TODO: Associativity
   // (m >>= f) >>= g ≡ m >>= (\x -> f x >>= g)
 
-  function Associativity<M extends Monad<M>, A, B>(M: M, arbF: Arbitrary<Fix<M, A>>) {}
+  function Associativity<M extends Kind1, A, B>(M: MonadInstance<M>, arbF: Arbitrary<Fix<M, A>>) {}
 }

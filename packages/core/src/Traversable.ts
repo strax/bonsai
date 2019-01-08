@@ -1,28 +1,45 @@
 import { Kind1, Fix, HasKind1, Type1 } from "./kinds"
-import { Applicative } from "./Applicative"
+import { Applicative, ApplicativeInstance, IsApplicative } from "./Applicative"
+import { Functor, FunctorInstance, IsFunctor } from "./Functor"
+
+export function Traversable<F extends IsTraversable>(F: HasKind1<F>): Traversable<F> {
+  return F[Kind1.kind][Traversable.instance]
+}
+
+export interface IsTraversable extends IsFunctor {
+  [Traversable.instance]: Traversable<this>
+}
 
 export namespace Traversable {
   export const traverse = Symbol("Traversable.traverse")
   export const sequence = Symbol("Traversable.sequence")
+
+  export const instance = Symbol("Traversable.instance")
 }
 
-type Sequence<F extends HasKind1, T> = T extends Fix<infer G, infer A> ? Fix<G, Fix<F, A>> : never
+export interface TraversableInstance<F extends Kind1> extends FunctorInstance<F> {
+  [Traversable.instance]: Traversable<F>
+}
 
-export interface Traversable<F extends Traversable<F>> extends HasKind1 {
-  [Traversable.traverse]<G extends Applicative<G>, A, B>(fa: Fix<F, A>, f: (a: A) => Fix<G, B>): Fix<G, Fix<F, B>>
-  [Traversable.sequence]<G extends Applicative<G>, A>(fga: Fix<F, Fix<G, A>>): Fix<G, Fix<F, A>>
+type Sequence<F extends Kind1, T> = T extends Fix<infer G, infer A> ? Fix<G, Fix<F, A>> : never
+
+export interface Traversable<F extends Kind1> {
+  functor: Functor<F>
+
+  traverse<G extends IsApplicative, A, B>(fa: Fix<F, A>, f: (a: A) => Fix<G, B>): Fix<G, Fix<F, B>>
+  sequence<G extends IsApplicative, A>(fga: Fix<F, Fix<G, A>>): Fix<G, Fix<F, A>>
 }
 
 // TODO: Can we have inference without capturing the whole `T` here?
-export function sequence<F extends Traversable<F>, T extends Fix<Applicative<any>, any>>(
-  fga: Fix<F, T>
-): Sequence<F, T> {
-  return fga.constructor[Traversable.sequence](fga as Fix<F, Fix<any, any>>) as Sequence<F, T>
+export function sequence<A, F extends IsTraversable, G extends IsApplicative>(fga: Fix<F, Fix<G, A>>) {
+  return Traversable<F>(fga).sequence<G, A>(fga)
 }
 
-export function traverse<F extends Traversable<F>, G extends Applicative<G>, A, B>(
+type NoInfer<T> = T & { [K in keyof T]: T[K] }
+
+export const traverse = <F extends IsTraversable, A, G extends IsApplicative, B>(
   fa: Fix<F, A>,
   f: (a: A) => Fix<G, B>
-): Fix<G, Fix<F, B>> {
-  return fa.constructor[Traversable.traverse](fa, f)
+): Fix<G, Fix<F, B>> => {
+  return Traversable<F>(fa).traverse(fa, f)
 }
