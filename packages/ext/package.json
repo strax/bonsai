@@ -1,0 +1,15 @@
+{
+  "name": "@bonsai/ext",
+  "version": "0.0.1",
+  "description": "Bonsai support for builtin JavaScript objects",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "dependencies": {
+    "@bonsai/core": "*"
+  },
+  "devDependencies": {
+    "typescript": "*",
+    "ts-node": "7.0.1"
+  }
+}

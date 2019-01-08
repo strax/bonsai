@@ -1,10 +1,7 @@
 import "./array.types"
 import { op } from "./op"
-import { Functor, fmap } from "../Functor"
-import { Applicative, pure, map2 } from "../Applicative"
-import { Monad } from "../Monad"
-import { Traversable } from "../Traversable"
-import { Fix } from "../kinds"
+import { Functor, Applicative, Monad, Traversable, pure, fmap, map2 } from "@bonsai/core"
+import { Fix } from "@bonsai/core/dist/kinds"
 
 // We need to use an abstract class (or a class) instead of a namespace because
 // decorators are not supported with namespaces yet

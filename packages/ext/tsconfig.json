@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "target": "esnext",
+    "composite": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "experimentalDecorators": true,
+    "keyofStringsOnly": false
+  },
+  "include": ["src/**/*"],
+  "exclude": ["dist/**/*"],
+  "references": [
+    {
+      "path": "../core"
+    }
+  ]
+}

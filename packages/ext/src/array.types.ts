@@ -1,9 +1,4 @@
-import { Kind1, Type1, HasKind1 } from "../kinds"
-import { Applicative } from "../Applicative"
-import { Monad } from "../Monad"
-import { Functor } from "../Functor"
-import { Monoid } from "../Monoid"
-import { Traversable } from "../Traversable"
+import { Kind1, Type1, Monad, Traversable } from "@bonsai/core"
 
 // #region Array :: * -> *
 declare const enum Array$Witness {}
