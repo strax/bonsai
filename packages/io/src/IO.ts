@@ -1,16 +1,7 @@
-import { Type1, Kind1, Fix, ToKind } from "./kinds"
-import { Monad } from "./Monad"
-import { Functor } from "./Functor"
-import { Applicative, pure } from "./Applicative"
-import { id } from "./utils"
+import { Type1, Kind1, Monad, Functor, Applicative, pure, id } from "@bonsai/core"
 
 declare const enum IO$Witness {}
 
-function bind1<Args extends Array<any>, A, R>(f: (a1: A, ...args: Args) => R, a: A): (...args: Args) => R {
-  return (...args) => f(a, ...args)
-}
-
-@protocol<Monad<IOConstructor>>()
 export class IO<A> {
   static [Kind1.kind]: IO$λ
 
@@ -66,5 +57,3 @@ export interface IO<A> extends Type1<IOConstructor, A> {}
 interface IO$λ extends Kind1<IO$Witness> {
   [Kind1.refine]: this extends Type1<IOConstructor, infer A> ? IO<A> : never
 }
-
-const x = pure(IO)(2)

@@ -1,0 +1,17 @@
+{
+  "name": "@bonsai/io",
+  "version": "0.0.1",
+  "description": "Bonsai-compliant IO monad for TypeScript",
+  "sideEffects": false,
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "dependencies": {
+    "@bonsai/core": "*",
+    "fast-check": "*"
+  },
+  "devDependencies": {
+    "typescript": "*",
+    "ts-node": "7.0.1"
+  }
+}
