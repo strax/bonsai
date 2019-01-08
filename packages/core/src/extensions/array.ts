@@ -1,9 +1,10 @@
 import "./array.types"
 import { op } from "./op"
-import { Functor } from "../Functor"
-import { Applicative } from "../Applicative"
+import { Functor, fmap } from "../Functor"
+import { Applicative, pure, map2 } from "../Applicative"
 import { Monad } from "../Monad"
-import { Monoid } from "../Monoid"
+import { Traversable } from "../Traversable"
+import { Fix } from "../kinds"
 
 // We need to use an abstract class (or a class) instead of a namespace because
 // decorators are not supported with namespaces yet
@@ -26,5 +27,16 @@ abstract class ArrayExtensions {
   @op(Array, Monad.flatMap)
   static flatMap<A, B>(fa: Array<A>, f: (a: A) => Array<B>): Array<B> {
     return fa.flatMap(a => f(a))
+  }
+
+  @op(Array, Traversable.traverse)
+  static traverse<G extends Applicative<G>, A, B>(as: Array<A>, f: (a: A) => Fix<G, B>): Fix<G, Array<B>> {
+    return this.sequence(as.map(f))
+  }
+
+  @op(Array, Traversable.sequence)
+  static sequence<G extends Applicative<G>, A>(gas: Array<Fix<G, A>>): Fix<G, Array<A>> {
+    const xs = gas.map(_ => fmap(_, pure(Array)))
+    return xs.reduce((ga0, ga1) => map2(ga0, ga1, (as0, as1) => [...as0, ...as1]))
   }
 }

@@ -1,40 +1,45 @@
-import { Kind, id, Type1, Functor, Monad, Applicative } from "@bonsai/core"
+import { Kind1, id, Type1, Functor, Monad, Applicative } from "@bonsai/core"
 
 declare const enum Witness {}
-interface Option$Kind extends Kind<Witness> {
-  [Kind.refine]: this extends Type1<Option$Kind, infer A> ? Option<A> : never
+interface Option$λ extends Kind1<Witness> {
+  [Kind1.refine]: this extends Type1<OptionConstructor, infer A> ? Option<A> : never
 }
 
 const isNot = <A>(a: A) => <B>(b: A | B): b is Exclude<B, A> => b !== a
 
-abstract class Option<A> implements Monad<Option$Kind> {
+abstract class Option<A> {
   abstract get(): A
   abstract isEmpty(): boolean
+
+  static [Kind1.kind]: Option$λ
+
+  static [Functor.map]<A, B>(fa: Option<A>, f: (a: A) => B): Option<B> {
+    return fa.map(f)
+  }
 
   static [Applicative.pure]<A>(a: A): Option<A> {
     return Option.pure(a)
   }
 
-  [Functor.map]<A, B>(this: Option<A>, f: (a: A) => B): Option<B> {
+  static [Applicative.ap]<A, B>(fa: Option<A>, ff: Option<(a: A) => B>): Option<B> {
+    return fa.ap(ff)
+  }
+
+  static [Monad.flatMap]<A, B>(fa: Option<A>, f: (a: A) => Option<B>): Option<B> {
+    return fa.flatMap(f)
+  }
+
+  map<B>(f: (a: A) => B): Option<B> {
     return this.fold(a => Option.pure(f(a)), Option.empty)
   }
 
-  [Applicative.ap]<A, B>(this: Option<A>, fab: Option<(a: A) => B>): Option<B> {
+  ap<B>(fab: Option<(a: A) => B>): Option<B> {
     return fab.flatMap(f => this.map(a => f(a)))
   }
 
-  [Monad.flatMap]<A, B>(this: Option<A>, f: (a: A) => Option<B>): Option<B> {
+  flatMap<B>(f: (a: A) => Option<B>): Option<B> {
     return this.fold(f, Option.empty)
   }
-
-  [Monad.flatten]<A>(this: Option<Option<A>>): Option<A> {
-    return this.flatMap(id)
-  }
-
-  readonly map = this[Functor.map]
-  readonly ap = this[Applicative.ap]
-  readonly flatMap = this[Monad.flatMap]
-  readonly flatten = this[Monad.flatten]
 
   fold<B>(f: (a: A) => B, b: () => B): B {
     return this.isEmpty() ? b() : f(this.get())
@@ -71,9 +76,9 @@ abstract class Option<A> implements Monad<Option$Kind> {
   }
 }
 
-interface Option<A> extends Type1<Option$Kind, A> {
-  constructor: typeof Option
-}
+type OptionConstructor = typeof Option
+
+interface Option<A> extends Type1<OptionConstructor, A> {}
 
 export class Some<A> extends Option<A> {
   constructor(private value: A) {

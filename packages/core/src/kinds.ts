@@ -32,7 +32,7 @@ export { Type1 as λ }
 // Extracts the `F` component of the type witness tuple of `Type1`
 export type ToKind<T extends Type1<any, any>> = T[typeof TypeWitness][0]
 
-type ConstrainedGeneric<A, B> = A extends B ? A : A & B
+type ConstrainedGeneric<A, B> = [A] extends [B] ? A : A & B
 
 export type Refine<T extends Type1<any, any>> = ConstrainedGeneric<(ToKind<T> & T)[Kind1.refine], T>
 

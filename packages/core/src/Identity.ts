@@ -1,16 +1,26 @@
 import { Kind1, Type1 } from "./kinds"
 import { Functor } from "./Functor"
+import { Applicative } from "./Applicative"
 
 // Unique tag to make `IdentityK` nominal
 // This is as good as it gets to generate unique uninhabitated types;
 // unique symbols need an extra type alias declaration compared to this
 declare const enum Witness {}
 
-@protocol<Functor<IdentityConstructor>>()
+@protocol<Applicative<IdentityConstructor>>()
 export class Identity<A> {
   static [Kind1.kind]: Identity$λ
 
   static [Functor.map]<A, B>(fa: Identity<A>, f: (a: A) => B): Identity<B> {
+    return new Identity(f(fa.value))
+  }
+
+  static [Applicative.pure]<A>(a: A): Identity<A> {
+    return new Identity(a)
+  }
+
+  static [Applicative.ap]<A, B>(fa: Identity<A>, ff: Identity<(a: A) => B>): Identity<B> {
+    const f = ff.value
     return new Identity(f(fa.value))
   }
 

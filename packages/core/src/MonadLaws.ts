@@ -4,18 +4,14 @@ import { Applicative, pure } from "./Applicative"
 import { Kind1, Fix } from "./kinds"
 
 export namespace MonadLaws {
-  function LeftIdentity<M extends Monad<M>, A, B>(
-    M: M,
-    arbA: Arbitrary<A>,
-    arbF: Arbitrary<(a: A) => Fix<M, B>>
-  ) {
+  function LeftIdentity<M extends Monad<M>, A, B>(M: M, arbA: Arbitrary<A>, arbF: Arbitrary<(a: A) => Fix<M, B>>) {
     return property(arbA, arbF, (a, f) => {
       return chain(pure(M)(a), f) === f(a)
     })
   }
 
   function RightIdentity<M extends Monad<M>, A>(M: M, arbMA: Arbitrary<Fix<M, A>>) {
-    return property(arbMA, (ma) => {
+    return property(arbMA, ma => {
       return chain(ma, pure(M)) === ma
     })
   }
@@ -23,5 +19,5 @@ export namespace MonadLaws {
   // TODO: Associativity
   // (m >>= f) >>= g ≡ m >>= (\x -> f x >>= g)
 
-  function Associativity<M extends Monad<M>, A
+  function Associativity<M extends Monad<M>, A, B>(M: M, arbF: Arbitrary<Fix<M, A>>) {}
 }

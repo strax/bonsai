@@ -5,8 +5,10 @@ import { Identity } from "./Identity"
 import { Functor, fmap } from "./Functor"
 import { Const } from "./Const"
 import { IO } from "./IO"
-import { composeK } from "./Monad"
-import { pure } from "./Applicative"
+import { composeK, flatten } from "./Monad"
+import { pure, Applicative } from "./Applicative"
+import { sequence, traverse, Traversable } from "./Traversable"
+import { string } from "fast-check/*"
 
 // This works over all functors
 function mapToString<F extends Functor<F>, A>(fa: Fix<F, A>) {
@@ -56,3 +58,17 @@ function mapTwiceToConstant<F extends Functor<F>, A, B>(fa: Fix<F, A>, b: B): Fi
 
 const cstring = mapTwiceToConstant(new Const<number, number>(2), "foobar")
 const istring = mapTwiceToConstant(new Identity(2), "foo")
+
+const seq = sequence([new Identity(2)])
+
+declare function inj2<G extends Applicative<G>, A>(ga: Fix<G, A>): Fix<G, A>
+
+inj2(new Identity(2))
+
+const seq2 = traverse([1, 2, 3], a => new Identity(a))
+
+const ab = traverse([1, 2, 3], (n: number) => new Identity(String(n)))
+
+const ab2 = sequence([new Identity(2), new Identity(3)])
+
+const xxx = flatten(new Identity(new Identity(2)))
