@@ -5,7 +5,6 @@
     "composite": true,
     "outDir": "dist",
     "rootDir": "src",
-    "experimentalDecorators": true,
     "keyofStringsOnly": false,
     "strict": true
   },

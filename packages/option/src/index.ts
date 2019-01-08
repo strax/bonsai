@@ -1,33 +1,45 @@
 import { Kind1, id, Type1, Functor, Monad, Applicative } from "@bonsai/core"
 
-declare const enum Witness {}
-interface Option$λ extends Kind1<Witness> {
-  [Kind1.refine]: this extends Type1<OptionConstructor, infer A> ? Option<A> : never
+const isNot = <A>(a: A) => <B>(b: A | B): b is Exclude<B, A> => b !== a
+
+// #region Instances
+namespace OptionFunctor {
+  export function map<A, B>(fa: Option<A>, f: (a: A) => B): Option<B> {
+    return fa.map(f)
+  }
 }
 
-const isNot = <A>(a: A) => <B>(b: A | B): b is Exclude<B, A> => b !== a
+namespace OptionApplicative {
+  export const functor = OptionFunctor
+
+  export function pure<A>(a: A): Option<A> {
+    return Option.pure(a)
+  }
+
+  export function ap<A, B>(fa: Option<A>, ff: Option<(a: A) => B>): Option<B> {
+    return fa.ap(ff)
+  }
+}
+
+namespace OptionMonad {
+  export const applicative = OptionApplicative
+
+  export function flatMap<A, B>(fa: Option<A>, f: (a: A) => Option<B>): Option<B> {
+    return fa.flatMap(f)
+  }
+}
+// #endregion
 
 abstract class Option<A> {
   abstract get(): A
   abstract isEmpty(): boolean
 
-  static [Kind1.kind]: Option$λ
+  static [Functor.instance]: Functor<OptionKind> = OptionFunctor
+  static [Applicative.instance]: Applicative<OptionKind> = OptionApplicative
+  static [Monad.instance]: Monad<OptionKind> = OptionMonad
 
-  static [Functor.map]<A, B>(fa: Option<A>, f: (a: A) => B): Option<B> {
-    return fa.map(f)
-  }
-
-  static [Applicative.pure]<A>(a: A): Option<A> {
-    return Option.pure(a)
-  }
-
-  static [Applicative.ap]<A, B>(fa: Option<A>, ff: Option<(a: A) => B>): Option<B> {
-    return fa.ap(ff)
-  }
-
-  static [Monad.flatMap]<A, B>(fa: Option<A>, f: (a: A) => Option<B>): Option<B> {
-    return fa.flatMap(f)
-  }
+  static [Kind1.kind] = (Option as unknown) as OptionKind;
+  [Kind1.kind] = (Option as unknown) as OptionKind
 
   map<B>(f: (a: A) => B): Option<B> {
     return this.fold(a => Option.pure(f(a)), Option.empty)
@@ -76,9 +88,16 @@ abstract class Option<A> {
   }
 }
 
+// #region Bonsai HKT encoding
 type OptionConstructor = typeof Option
 
-interface Option<A> extends Type1<OptionConstructor, A> {}
+declare const enum Witness {}
+interface OptionKind extends Kind1<Witness>, OptionConstructor {
+  [Kind1.refine]: this extends Type1<OptionKind, infer A> ? Option<A> : never
+}
+
+interface Option<A> extends Type1<OptionKind, A> {}
+// #endregion
 
 export class Some<A> extends Option<A> {
   constructor(private value: A) {
