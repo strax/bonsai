@@ -1,5 +1,5 @@
-import { Kind1, Fix, HasKind1, Type1 } from "./kinds"
-import { Applicative, ApplicativeInstance, IsApplicative } from "./Applicative"
+import { Kind1, Fix, HasKind1 } from "./Kind1"
+import { IsApplicative } from "./Applicative"
 import { Functor, FunctorInstance, IsFunctor } from "./Functor"
 
 export function Traversable<F extends IsTraversable>(F: HasKind1<F>): Traversable<F> {

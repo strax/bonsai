@@ -1,4 +1,4 @@
-import { Fix, Kind1, HasKind1 } from "./kinds"
+import { Fix, Kind1, HasKind1 } from "./Kind1"
 import { Applicative, ApplicativeInstance, IsApplicative } from "./Applicative"
 
 export interface Monad<M extends Kind1> {

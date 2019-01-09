@@ -1,4 +1,4 @@
-import { Kind1, Type1, Fix } from "./kinds"
+import { Kind1, Type1, Fix } from "./Kind1"
 import { Functor, FunctorInstance } from "./Functor"
 import { Applicative, ApplicativeInstance } from "./Applicative"
 
@@ -32,7 +32,7 @@ type IdentityConstructor = typeof Identity
  * `Type1<IdentityK, A>` to `Identity<A>`.
  */
 interface IdentityKind extends Kind1<Witness>, IdentityConstructor {
-  [Kind1.refine]: this extends Type1<IdentityKind, infer A> ? Identity<A> : never
+  [Kind1.refine]: this extends Type1<IdentityKind, infer A> ? Identity<A> : ~this
 }
 
 export class Identity<A> {

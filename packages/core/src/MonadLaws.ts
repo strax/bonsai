@@ -1,7 +1,7 @@
 import { Arbitrary, property } from "fast-check"
 import { Monad, MonadInstance, IsMonad } from "./Monad"
 import { pure } from "./Applicative"
-import { Kind1, Fix, HasKind1 } from "./kinds"
+import { Kind1, Fix, HasKind1 } from "./Kind1"
 
 export namespace MonadLaws {
   function LeftIdentity<M extends IsMonad, A, B>(

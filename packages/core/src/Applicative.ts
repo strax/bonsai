@@ -1,5 +1,5 @@
 import { Functor, FunctorInstance, IsFunctor } from "./Functor"
-import { Fix, Kind1, HasKind1, Type1 } from "./kinds"
+import { Fix, Kind1, HasKind1, Type1 } from "./Kind1"
 
 export interface Applicative<F extends Kind1> {
   functor: Functor<F>
@@ -40,3 +40,24 @@ export function map2<F extends IsApplicative, A, B, C>(fa: Fix<F, A>, fb: Fix<F,
   const ff = pure<F>(fa)((a: A) => (b: B) => f(a, b))
   return ap(fb, ap(fa, ff))
 }
+
+type StackSig<S, A> = {
+  init(): S
+  push(s: S, x: A): void
+  pop(s: S): A
+  size(s: S): number
+}
+
+function makeNewUniqueClass() {
+  const enum K {}
+  return class {
+    private value!: K
+  }
+}
+
+type Eq<A, B> = [A] extends [B] ? ([B] extends [A] ? true : false) : false
+
+const A = makeNewUniqueClass()
+const B = makeNewUniqueClass()
+
+type eq1 = Eq<typeof A, typeof B>

@@ -1,4 +1,4 @@
-import { Type1, Kind1, Kind2, Type2, Fix } from "./kinds"
+import { Type1, Kind1, Kind2, Type2, Fix } from "./Kind1"
 import { Functor, fmap, FunctorInstance } from "./Functor"
 
 namespace ConstFunctor {
@@ -31,7 +31,7 @@ interface ConstKind extends Kind2<Witness> {
 }
 
 // Type lambda that encodes a partially applied Const type : Const a :: * -> *
-interface Const$λ<A = unknown> extends Kind1<[ConstKind, A]>, FunctorInstance<Const$λ<A>> {
+interface Const$λ<A = any> extends Kind1<[ConstKind, A]>, FunctorInstance<Const$λ<A>> {
   [Kind1.refine]: [this] extends [Type1<Const$λ<A>, infer B>] ? Const<A, B> : never
 }
 
