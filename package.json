@@ -6,9 +6,9 @@
     "packages/*"
   ],
   "devDependencies": {
-    "typescript": "3.3.0-dev.20190105"
+    "typescript": "3.3.0-dev.20190110"
   },
   "resolutions": {
-    "typescript": "3.3.0-dev.20190105"
+    "typescript": "3.3.0-dev.20190110"
   }
 }

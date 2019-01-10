@@ -3472,7 +3472,7 @@ ts-jest@23.10.5:
     semver "^5.5"
     yargs-parser "10.x"
 
-ts-node@7.0.1:
+ts-node@*, ts-node@7.0.1:
   version "7.0.1"
   resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-7.0.1.tgz#9562dc2d1e6d248d24bc55f773e3f614337d9baf"
   integrity sha512-BVwVbPJRspzNh2yfslyT1PSbl5uIk03EZlb493RKHN4qej/D06n1cEhjlOJG69oFsE7OT8XjpTUcYf6pKTLMhw==
@@ -3505,10 +3505,10 @@ type-check@~0.3.2:
   dependencies:
     prelude-ls "~1.1.2"
 
-typescript@*, typescript@3.3.0-dev.20190105:
-  version "3.3.0-dev.20190105"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.3.0-dev.20190105.tgz#67408f553a30f7e92b4e9afe299aaa224c7a2ea2"
-  integrity sha512-YEAfFaWIdfu0Er6Qvhf1RuzboUFvpbV9p77uOKVIHBYQc3Q61fPJiXQYA7l0liBctT3gzb1ZepgetC1k1Sdx7g==
+typescript@*, typescript@3.3.0-dev.20190110:
+  version "3.3.0-dev.20190110"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.3.0-dev.20190110.tgz#3904786315ffd8aa10144b6e10562895206b8ffd"
+  integrity sha512-KX6KnWq717uH4cXe9RZruhwnhPufqBLDrxAHy6k3A5JHPnIRuaK2cdij+TQNG8nur3PO6dTLWo4rgwdBsFz/qw==
 
 uglify-js@^3.1.4:
   version "3.4.9"
