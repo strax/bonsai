@@ -1,28 +1,11 @@
-import {
-  Traversable,
-  Identity,
-  sequence,
-  IsTraversable,
-  IsApplicative,
-  Fix,
-  IsFunctor,
-  fmap,
-  Kind1,
-  traverse
-} from "@bonsai/core"
+import "./array.types"
 
-Traversable(Array).sequence([new Identity(2)])
-Traversable(Array).traverse([1, 2, 3], (a: number) => new Identity(a))
+import { Traversable, Identity, sequence, traverse } from "@bonsai/core"
 
-type NoInfer<T> = { [K in keyof T]: T[K] } & T
+// These work:
+Traversable(Array).sequence(Identity, [new Identity(2)])
+Traversable(Array).traverse(Identity, [1, 2, 3], (a: number) => new Identity(a))
 
-// const traverse = <F extends IsFunctor, A>(fa: Fix<F, A>): Fix<F, A> => {
-//   return fa
-// }
-
-declare function inj<F extends Kind1, A>(fa: Fix<F, A>): Fix<F, A>
-
-inj(new Identity(2))
-
-const g = traverse([new Identity(2)], x => x)
-const x = sequence([new Identity(2)])
+const g = traverse(Array, Identity, [2], x => new Identity(x))
+// FIXME: Type refinement broken for the inner Applicative
+const x = sequence(Array, Identity, [new Identity(2)])

@@ -1,15 +1,20 @@
-import { Type1, Kind1, Monad, Functor, Applicative, pure, id, FunctorInstance } from "@bonsai/core"
+import { Monad, Functor, MonadSyntax } from "@bonsai/core"
+import { Type1, Kind1 } from "@bonsai/kinds"
 
-declare const enum IO$Witness {}
+export class IO<A> extends MonadSyntax<IO$kind> {
+  constructor(private run: () => A) {
+    super(IO)
+  }
 
-namespace IOFunctor {
-  export function map<A, B>(io: IO<A>, f: (a: A) => B): IO<B> {
-    return new IO(() => f(io.unsafeRun()))
+  unsafeRun(): A {
+    return this.run()
   }
 }
 
-namespace IOApplicative {
-  export const functor = IOFunctor
+export namespace IO {
+  export function map<A, B>(io: IO<A>, f: (a: A) => B): IO<B> {
+    return new IO(() => f(io.unsafeRun()))
+  }
 
   export function pure<A>(a: A): IO<A> {
     return new IO(() => a)
@@ -18,50 +23,14 @@ namespace IOApplicative {
   export function ap<A, B>(fa: IO<A>, fab: IO<(a: A) => B>): IO<B> {
     return Functor(IO).map(fa, a => fab.unsafeRun()(a))
   }
-}
-
-namespace IOMonad {
-  export const applicative = IOApplicative
 
   export function flatMap<A, B>(fa: IO<A>, f: (a: A) => IO<B>): IO<B> {
     return new IO(() => f(fa.unsafeRun()).unsafeRun())
   }
 }
 
-export class IO<A> {
-  static [Kind1.kind] = (IO as unknown) as IOKind
-
-  static [Functor.instance]: Functor<IOKind> = IOFunctor
-  static [Applicative.instance]: Applicative<IOKind> = IOApplicative
-  static [Monad.instance]: Monad<IOKind> = IOMonad
-
-  static pure<A>(a: A): IO<A> {
-    return Applicative(IO).pure(a)
-  }
-
-  [Kind1.kind] = (IO as unknown) as IOKind
-
-  map<B>(f: (a: A) => B): IO<B> {
-    return Functor(IO).map(this, f)
-  }
-
-  flatMap<B>(f: (a: A) => IO<B>): IO<B> {
-    return Monad(IO).flatMap(this, f)
-  }
-
-  // #endregion
-
-  constructor(private run: () => A) {}
-
-  unsafeRun(): A {
-    return this.run()
-  }
+declare const enum IO$witness {}
+interface IO$kind extends Kind1<IO$witness> {
+  [Kind1.refine]: this extends Type1<IO$kind, infer A> ? IO<A> : never
 }
-
-type IOConstructor = typeof IO
-
-export interface IO<A> extends Type1<IOKind, A> {}
-
-interface IOKind extends Kind1<IO$Witness>, IOConstructor {
-  [Kind1.refine]: this extends Type1<IOKind, infer A> ? IO<A> : never
-}
+export interface IO<A> extends Type1<IO$kind, A> {}

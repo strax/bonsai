@@ -1,63 +1,66 @@
-import { Functor, FunctorInstance, IsFunctor } from "./Functor"
-import { Fix, Kind1, HasKind1, Type1 } from "./Kind1"
+import { Fix, Kind1 } from "@bonsai/kinds"
+import { Functor, FunctorOps, FunctorInstance, FunctorSyntax } from "./Functor"
 
-export interface Applicative<F extends Kind1> {
-  functor: Functor<F>
+export interface ApplicativeInstance<F extends Kind1> extends FunctorInstance<F> {
+  [Applicative.pure]<A>(a: A): Fix<F, A>
+  [Applicative.ap]<A, B>(fa: Fix<F, A>, fab: Fix<F, (a: A) => B>): Fix<F, B>
+}
 
+export function Applicative<F extends Kind1>(from: Applicative<F>): ApplicativeOps<F> {
+  if (Applicative.pure in from) {
+    return new (ApplicativeOps(from as ApplicativeInstance<F>))()
+  } else {
+    return from as ApplicativeOps<F>
+  }
+}
+
+export namespace Applicative {
+  export const pure = Symbol("Applicative.pure")
+  export const ap = Symbol("Applicative.ap")
+}
+
+export interface ApplicativeOps<F extends Kind1> extends FunctorOps<F> {
   pure<A>(a: A): Fix<F, A>
   ap<A, B>(fa: Fix<F, A>, fab: Fix<F, (a: A) => B>): Fix<F, B>
 }
 
-export interface IsApplicative extends IsFunctor {
-  [Applicative.instance]: Applicative<this>
-}
-
-export function Applicative<F extends IsApplicative>(F: HasKind1<F>): Applicative<F> {
-  return F[Kind1.kind][Applicative.instance]
-}
-
-export namespace Applicative {
-  export const instance = Symbol("Applicative.instance")
-}
-
-export interface ApplicativeConstraint extends Kind1 {
-  [Applicative.instance]: Applicative<this>
-}
-
-export interface ApplicativeInstance<F extends Kind1> extends FunctorInstance<F> {
-  [Applicative.instance]: Applicative<F>
-}
-
-export function ap<F extends IsApplicative, A, B>(fa: Fix<F, A>, fab: Fix<F, (a: A) => B>): Fix<F, B> {
-  return Applicative<F>(fa).ap(fa, fab)
-}
-
-export function pure<F extends IsApplicative>(A: HasKind1<F>): <A>(a: A) => Fix<F, A> {
-  return a => Applicative(A).pure(a)
-}
-
-export function map2<F extends IsApplicative, A, B, C>(fa: Fix<F, A>, fb: Fix<F, B>, f: (a: A, b: B) => C): Fix<F, C> {
-  const ff = pure<F>(fa)((a: A) => (b: B) => f(a, b))
-  return ap(fb, ap(fa, ff))
-}
-
-type StackSig<S, A> = {
-  init(): S
-  push(s: S, x: A): void
-  pop(s: S): A
-  size(s: S): number
-}
-
-function makeNewUniqueClass() {
-  const enum K {}
-  return class {
-    private value!: K
+export function ApplicativeOps<F extends Kind1>(F: ApplicativeInstance<F>) {
+  return class extends FunctorOps(F) implements ApplicativeOps<F> {
+    pure = F[Applicative.pure]
+    ap = F[Applicative.ap]
   }
 }
 
-type Eq<A, B> = [A] extends [B] ? ([B] extends [A] ? true : false) : false
+export abstract class ApplicativeSyntax<K extends Kind1> extends FunctorSyntax<K> {
+  private applicative: ApplicativeOps<K>
 
-const A = makeNewUniqueClass()
-const B = makeNewUniqueClass()
+  constructor(F: Applicative<K>) {
+    super(F)
+    this.applicative = Applicative(F)
+  }
 
-type eq1 = Eq<typeof A, typeof B>
+  ap<F extends K, A, B>(this: Fix<F, A>, fab: Fix<F, (a: A) => B>): Fix<F, B> {
+    return (this as ApplicativeSyntax<F>).applicative.ap(this, fab)
+  }
+}
+
+export type Applicative<F extends Kind1> = ApplicativeInstance<F> | ApplicativeOps<F>
+
+export function ap<F extends Kind1, A, B>(F: Applicative<F>, fa: Fix<F, A>, fab: Fix<F, (a: A) => B>): Fix<F, B> {
+  return Applicative(F).ap(fa, fab)
+}
+
+export function pure<F extends Kind1>(F: Applicative<F>): <A>(a: A) => Fix<F, A> {
+  return a => Applicative(F).pure(a)
+}
+
+export function map2<F extends Kind1, A, B, C>(
+  F: Applicative<F>,
+  fa: Fix<F, A>,
+  fb: Fix<F, B>,
+  f: (a: A, b: B) => C
+): Fix<F, C> {
+  const { pure, ap } = Applicative(F)
+  const ff = pure((a: A) => (b: B) => f(a, b))
+  return ap(fb, ap(fa, ff))
+}

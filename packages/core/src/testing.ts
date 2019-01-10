@@ -1,30 +1,14 @@
 import { Identity } from "./Identity"
-import { fmap, IsFunctor, Functor } from "./Functor"
-import { Applicative } from "./Applicative"
-import { Fix } from "./Kind1"
-import { Const } from "./Const"
-import { string } from "fast-check/*"
+import { fmap, Functor } from "./Functor"
+import { pure } from "./Applicative"
+import { Fix, Kind1 } from "@bonsai/kinds"
 
-const ida = new Identity(2)
-const idc = fmap(ida, x => x)
-
-type test = ~("a" | "b")
-type Exclude<T, U> = T & ~U
-
-type z = {a: 2, b: string} & ~{a: 2}
-
-type zz = ~never
-
-const x: test = "c"
-
-function mapTwiceToString<F extends IsFunctor>(fa: Fix<F, number>): Fix<F, string> {
-  return fmap(fmap(fa, String), String)
+function mapTwiceToString<F extends Kind1>(F: Functor<F>, fa: Fix<F, number>): Fix<F, string> {
+  return fmap(F, fmap(F, fa, String), String)
 }
 
 declare const fa: Identity<number>
 
-fmap(fa, x => x)
+mapTwiceToString(Identity, new Identity(2))
 
-mapTwiceToString(new Identity(2))
-
-Applicative(Identity).pure(2)
+pure(Identity)(2)

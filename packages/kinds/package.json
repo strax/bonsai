@@ -1,0 +1,13 @@
+{
+  "name": "@bonsai/kinds",
+  "version": "0.0.1",
+  "description": "Higher-kinded polymorphism for TypeScript",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "*",
+    "ts-node": "7.0.1"
+  }
+}

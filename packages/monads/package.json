@@ -1,0 +1,16 @@
+{
+  "name": "@bonsai/monads",
+  "version": "0.0.1",
+  "description": "Common monads for Bonsai",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "dependencies": {
+    "@bonsai/core": "*",
+    "fast-check": "*"
+  },
+  "devDependencies": {
+    "typescript": "*",
+    "ts-node": "7.0.1"
+  }
+}
