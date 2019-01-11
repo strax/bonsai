@@ -7,8 +7,8 @@ export namespace Kind2 {
   export declare const refine: unique symbol
   export type refine = typeof refine
 
-  export interface λ<F extends Kind2, A = unknown> extends Kind1<[F, unknown]> {
-    [Kind1.refine]: [this] extends [Type1<λ<F, infer A>, infer B>] ? Fix2<F, A, B> : never
+  export interface λ<F extends Kind2, A> extends Kind1<[F, unknown]> {
+    [Kind1.refine]: this extends Type1<λ<F, infer A>, infer B> ? Fix2<F, A, B> : never
   }
 }
 
