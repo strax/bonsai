@@ -5,12 +5,16 @@
   "license": "MIT",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "dependencies": {
-    "@bonsai/tuples": "*",
-    "fast-check": "*"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "fast-check": "*",
+    "@bonsai/laws": "*",
     "typescript": "*",
-    "ts-node": "7.0.1"
+    "ts-node": "7.0.1",
+    "jest": "*"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "rootDir": "src"
   }
 }

@@ -1,22 +1,14 @@
-import { id, Functor, Monad, Applicative } from "@bonsai/core"
+import { id, MonadSyntax } from "@bonsai/core"
 import { Kind1, Type1 } from "@bonsai/kinds"
 
 const isNot = <A>(a: A) => <B>(b: A | B): b is Exclude<B, A> => b !== a
 
-export abstract class Option<A> {
+export abstract class Option<A> extends MonadSyntax<Option$kind> {
   abstract get(): A
   abstract isEmpty(): boolean
 
-  map<B>(f: (a: A) => B): Option<B> {
-    return this.fold(a => Option.pure(f(a)), Option.empty)
-  }
-
-  ap<B>(fab: Option<(a: A) => B>): Option<B> {
-    return fab.flatMap(f => this.map(a => f(a)))
-  }
-
-  flatMap<B>(f: (a: A) => Option<B>): Option<B> {
-    return this.fold(f, Option.empty)
+  constructor() {
+    super(Option)
   }
 
   fold<B>(f: (a: A) => B, b: () => B): B {
@@ -54,26 +46,22 @@ export abstract class Option<A> {
   }
 }
 
-// #region Instances
+// #region Monad<Option>
 export namespace Option {
   export function map<A, B>(fa: Option<A>, f: (a: A) => B): Option<B> {
-    return fa.map(f)
+    return fa.fold(a => pure(f(a)), () => None)
   }
-}
 
-export namespace Option {
   export function pure<A>(a: A): Option<A> {
-    return Option.pure(a)
+    return new Some(a)
   }
 
   export function ap<A, B>(fa: Option<A>, ff: Option<(a: A) => B>): Option<B> {
-    return fa.ap(ff)
+    return ff.flatMap(f => fa.map(f))
   }
-}
 
-export namespace Option {
   export function flatMap<A, B>(fa: Option<A>, f: (a: A) => Option<B>): Option<B> {
-    return fa.flatMap(f)
+    return fa.fold(f, () => None)
   }
 }
 // #endregion
@@ -128,10 +116,6 @@ export namespace Option {
 
   export function empty(): Option<never> {
     return None
-  }
-
-  export function sequence<A>(fas: Array<Option<A>>): Option<Array<A>> {
-    return fas.reduce((fas, fa) => map2(fas, fa, (as, a) => [...as, a]), pure<Array<A>>([]))
   }
 
   // #region map2..map6

@@ -1,7 +1,7 @@
 import { FunctorSyntax, fmap } from "@bonsai/core"
 import { Kind2, Type2 } from "@bonsai/kinds"
 
-export class State<S, A> extends FunctorSyntax<Kind2.λ<State$kind>> {
+export class State<S, A> extends FunctorSyntax<Kind2.λ<State$kind, S>> {
   constructor(private f: (s: S) => [A, S]) {
     super(State)
   }
@@ -21,7 +21,7 @@ export class State<S, A> extends FunctorSyntax<Kind2.λ<State$kind>> {
 
 declare const s: State<void, number>
 
-new State<void, number>(() => [2, undefined as void]).map(() => 2)
+new State<void, number>(_ => [2, undefined as void]).map(() => 2)
 
 export namespace State {
   export function map<S, A, B>(sa: State<S, A>, f: (a: A) => B): State<S, B> {

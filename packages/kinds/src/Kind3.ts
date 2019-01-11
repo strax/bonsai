@@ -14,7 +14,7 @@ export namespace Kind3 {
 
   // Encodes partial type application (m :: * -> * -> * -> *) a :: * -> * -> *
   export interface λ<F extends Kind3, A> extends Kind2<[F, unknown]> {
-    [Kind2.refine]: this extends Type2<λ<F, A>, infer B, infer C> ? Fix3<F, A, B, C> : never
+    [Kind2.refine]: this extends Type2<λ<F, infer A>, infer B, infer C> ? Fix3<F, A, B, C> : never
   }
 }
 

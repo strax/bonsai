@@ -10,9 +10,17 @@
     "email": "sami@samikukkonen.fi"
   },
   "dependencies": {
-    "@bonsai/core": "*"
+    "@bonsai/core": "*",
+    "@bonsai/ext": "*"
   },
   "devDependencies": {
-    "typescript": "*"
+    "typescript": "*",
+    "@bonsai/laws": "*",
+    "fast-check": "1.10.0",
+    "jest": "*"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "rootDir": "src"
   }
 }

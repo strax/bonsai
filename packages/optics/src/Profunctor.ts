@@ -1,10 +1,6 @@
 import { Kind2, Fix2 } from "@bonsai/core"
 import { HasKind2 } from "@bonsai/core/dist/kinds"
 
-export interface Profunctor<P extends Kind2> {
-  dimap<A1, B1, A2, B2>(pab: Fix2<P, A1, B1>, f: (a: A2) => A1, g: (b: B1) => B2): Fix2<P, A2, B2>
-}
-
 export interface ProfunctorInstance<P extends Kind2> {
   [Profunctor.instance]: Profunctor<P>
 }

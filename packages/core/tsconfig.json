@@ -5,15 +5,13 @@
     "composite": true,
     "outDir": "dist",
     "rootDir": "src",
+    "declarationMap": true,
     "experimentalDecorators": true,
     "keyofStringsOnly": false
   },
-  "include": ["src/**/*", "../io/IO.test.ts", "../io/IO.ts"],
+  "include": ["src/**/*"],
   "exclude": ["dist/**/*"],
   "references": [
-    {
-      "path": "../tuples"
-    },
     {
       "path": "../kinds"
     }

@@ -9,7 +9,14 @@
     "@bonsai/core": "*"
   },
   "devDependencies": {
+    "@bonsai/laws": "*",
+    "jest": "*",
+    "fast-check": "1.10.0",
     "typescript": "*",
     "ts-node": "7.0.1"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "rootDir": "src"
   }
 }
