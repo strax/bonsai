@@ -15,8 +15,8 @@ export abstract class FunctorSyntax<F extends Kind1> {
     this.functor = Functor(F)
   }
 
-  map<G extends F, A, B>(this: Fix<G, A>, f: (a: A) => B): Fix<G, B> {
-    return (this as FunctorSyntax<G>).functor.map(this, f)
+  map<A, B>(this: Fix<F, A>, f: (a: A) => B): Fix<F, B> {
+    return (this as FunctorSyntax<F>).functor.map(this, f)
   }
 }
 

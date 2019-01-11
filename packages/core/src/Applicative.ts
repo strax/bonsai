@@ -1,5 +1,5 @@
 import { Fix, Kind1 } from "@bonsai/kinds"
-import { Functor, FunctorOps, FunctorInstance, FunctorSyntax } from "./Functor"
+import { FunctorOps, FunctorInstance, FunctorSyntax } from "./Functor"
 
 export interface ApplicativeInstance<F extends Kind1> extends FunctorInstance<F> {
   [Applicative.pure]<A>(a: A): Fix<F, A>
@@ -31,15 +31,15 @@ export function ApplicativeOps<F extends Kind1>(F: ApplicativeInstance<F>) {
   }
 }
 
-export abstract class ApplicativeSyntax<K extends Kind1> extends FunctorSyntax<K> {
-  private applicative: ApplicativeOps<K>
+export abstract class ApplicativeSyntax<F extends Kind1> extends FunctorSyntax<F> {
+  private applicative: ApplicativeOps<F>
 
-  constructor(F: Applicative<K>) {
+  constructor(F: Applicative<F>) {
     super(F)
     this.applicative = Applicative(F)
   }
 
-  ap<F extends K, A, B>(this: Fix<F, A>, fab: Fix<F, (a: A) => B>): Fix<F, B> {
+  ap<A, B>(this: Fix<F, A>, fab: Fix<F, (a: A) => B>): Fix<F, B> {
     return (this as ApplicativeSyntax<F>).applicative.ap(this, fab)
   }
 }

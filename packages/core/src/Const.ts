@@ -1,7 +1,7 @@
 import { Kind2, Type2 } from "@bonsai/kinds"
-import { Functor, FunctorSyntax } from "./Functor"
+import { FunctorSyntax } from "./Functor"
 
-export class Const<A, B = never> extends FunctorSyntax<Kind2.λ<Const$kind>> {
+export class Const<A, B> extends FunctorSyntax<Kind2.λ<Const$kind, A>> {
   constructor(private value: A) {
     super(Const)
   }

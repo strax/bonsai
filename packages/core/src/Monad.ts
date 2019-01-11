@@ -14,19 +14,19 @@ export function Monad<F extends Kind1>(from: Monad<F>): MonadOps<F> {
   }
 }
 
-export abstract class MonadSyntax<K extends Kind1> extends ApplicativeSyntax<K> {
-  private monad: MonadOps<K>
+export abstract class MonadSyntax<M extends Kind1> extends ApplicativeSyntax<M> {
+  private monad: MonadOps<M>
 
-  constructor(M: Monad<K>) {
+  constructor(M: Monad<M>) {
     super(M)
     this.monad = Monad(M)
   }
 
-  flatMap<M extends K, A, B>(this: Fix<M, A>, f: (a: A) => Fix<M, B>): Fix<M, B> {
+  flatMap<A, B>(this: Fix<M, A>, f: (a: A) => Fix<M, B>): Fix<M, B> {
     return (this as MonadSyntax<M>).monad.flatMap(this, f)
   }
 
-  flatten<M extends K, A>(this: Fix<K, Fix<M, A>>): Fix<M, A> {
+  flatten<A>(this: Fix<M, Fix<M, A>>): Fix<M, A> {
     return flatten((this as MonadSyntax<M>).monad, (this as unknown) as Fix<M, Fix<M, A>>)
   }
 }
