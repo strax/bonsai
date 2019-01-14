@@ -1,1 +1,1 @@
-export type Bounded<A, B> = A extends A ? (A extends B ? A : (A & B)) : never
+export type Bounded<A, B> = A extends B ? A : (A & B)

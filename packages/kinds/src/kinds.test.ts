@@ -51,6 +51,10 @@ interface Forget$kind extends Kind3<Forget$witness> {
 }
 interface Forget<R, A, B> extends Type3<Forget$kind, R, A, B> {}
 
+type z = Identity$kind[Kind1.kind]
+
+type zz = Identity<string>[Type1.witness]
+
 // #endregion
 
 declare function inj<F extends Kind1, A>(fa: Type1<F, A>): Type1<F, A>
