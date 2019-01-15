@@ -1,5 +1,5 @@
 import "./array"
-import { MonadLaws } from "@bonsai/laws"
+import { MonadLaws } from "@bonsai/core"
 import { array, anything } from "fast-check"
 
 describe("Array", () => {

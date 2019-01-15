@@ -19,7 +19,7 @@ export namespace Const {
 
 // #region HKT boilerplate
 declare const enum Const$witness {}
-interface Const$kind extends Kind2<Const$witness> {
+export interface Const$kind extends Kind2<Const$witness> {
   [Kind2.refine]: [this] extends [Type2<Const$kind, infer A, infer B>] ? Const<A, B> : never
 }
 export interface Const<A, B> extends Type2<Const$kind, A, B> {}

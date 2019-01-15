@@ -1,9 +1,8 @@
-import { Applicative, fmap, id, pure, ap, Monad } from "@bonsai/core"
 import { Kind1, Fix } from "@bonsai/kinds"
-import { Arbitrary, property, check, func, assert } from "fast-check"
+import { Arbitrary, property, func, assert } from "fast-check"
 import { isDeepStrictEqual as eq } from "util"
-import { FunctorLaws } from "./FunctorLaws"
 import { ApplicativeLaws } from "./ApplicativeLaws"
+import { Monad } from "../Monad"
 
 export namespace MonadLaws {
   export function run<M extends Kind1, A>(M: Monad<M>, arbMA: Arbitrary<Fix<M, A>>, arbA: Arbitrary<A>) {

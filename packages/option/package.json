@@ -15,7 +15,6 @@
   },
   "devDependencies": {
     "typescript": "*",
-    "@bonsai/laws": "*",
     "fast-check": "1.10.0",
     "jest": "*"
   },

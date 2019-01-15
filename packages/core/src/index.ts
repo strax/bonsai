@@ -8,3 +8,5 @@ export * from "./Identity"
 export * from "./Const"
 
 export * from "./utils"
+
+export * from "./laws"

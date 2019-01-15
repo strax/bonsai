@@ -27,6 +27,7 @@ declare function fix2<F extends Kind2, A, B>(fa: Fix2<F, A, B>): Fix2<F, A, B>
 // #region Moving between Type1 and concrete types
 // Identity :: * -> *
 const test1 = prj(inj(new Identity("foo")))
+const test1a = inj(Identity.pure(Identity.pure(2)))
 const test2 = fix(new Identity("foo"))
 // The inferred kind Kind2$λ<ConstKind, A> encodes Const a :: * -> *
 const test3 = prj(inj(new Const<number, string>(2)))

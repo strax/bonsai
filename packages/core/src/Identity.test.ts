@@ -1,4 +1,4 @@
-import { ApplicativeLaws } from "@bonsai/laws"
+import { ApplicativeLaws } from "./laws"
 import { Identity } from "./Identity"
 import { Arbitrary, anything } from "fast-check"
 

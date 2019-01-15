@@ -9,7 +9,6 @@
     "@bonsai/core": "*"
   },
   "devDependencies": {
-    "@bonsai/laws": "*",
     "jest": "*",
     "fast-check": "1.10.0",
     "typescript": "*",

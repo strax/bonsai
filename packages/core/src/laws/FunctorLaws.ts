@@ -1,6 +1,7 @@
-import { Functor, id } from "@bonsai/core"
+import { Functor } from "../Functor"
+import { id } from "../utils"
 import { Kind1, Fix } from "@bonsai/kinds"
-import { Arbitrary, property, check, func, assert } from "fast-check"
+import { Arbitrary, property, func, assert } from "fast-check"
 import { isDeepStrictEqual as eq } from "util"
 
 export namespace FunctorLaws {

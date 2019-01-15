@@ -29,13 +29,13 @@ export namespace Identity {
 // Unique tag to make `IdentityK` nominal
 // This is as good as it gets to generate unique uninhabitated types;
 // unique symbols need an extra type alias declaration compared to this
-declare const enum Witness {}
+declare const enum Identity$witness {}
 
 /**
  * This is the encoding of Identity :: * -> *
  * The [Kind1.refine] parameter allows us to obtain a concrete Identity<A> from a "generic" type application
  */
-interface Identity$kind extends Kind1<Witness> {
+export interface Identity$kind extends Kind1<Identity$witness> {
   [Kind1.refine]: [this] extends [Type1<Identity$kind, infer A>] ? Identity<A> : never
 }
 

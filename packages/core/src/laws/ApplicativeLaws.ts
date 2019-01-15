@@ -1,4 +1,5 @@
-import { Applicative, id } from "@bonsai/core"
+import { Applicative } from "../Applicative"
+import { id } from "../utils"
 import { Kind1, Fix } from "@bonsai/kinds"
 import { Arbitrary, property, func, assert } from "fast-check"
 import { isDeepStrictEqual as eq } from "util"

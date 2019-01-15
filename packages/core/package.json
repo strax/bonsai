@@ -8,7 +8,6 @@
   "dependencies": {},
   "devDependencies": {
     "fast-check": "*",
-    "@bonsai/laws": "*",
     "typescript": "*",
     "ts-node": "7.0.1",
     "jest": "*"

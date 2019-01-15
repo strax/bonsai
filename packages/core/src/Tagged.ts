@@ -4,4 +4,4 @@ interface Tagging<T> {
   [witness]: T
 }
 
-export type Tagged<T, U> = Tagging<T> & U
+export type Tagged<T, U = {}> = Tagging<T> & U

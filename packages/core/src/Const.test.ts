@@ -1,4 +1,4 @@
-import { FunctorLaws } from "@bonsai/laws"
+import { FunctorLaws } from "./laws"
 import { Arbitrary, anything } from "fast-check"
 import { Const } from "./Const"
 

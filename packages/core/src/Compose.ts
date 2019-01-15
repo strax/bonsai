@@ -1,24 +1,19 @@
-import { Kind1, Kind3, Type3, Kind2, Fix } from "@bonsai/kinds"
-import { Functor, FunctorSyntax } from "./Functor"
+import { Kind1, Type1, Fix, Kind2, Refine1 } from "@bonsai/kinds"
+import { Functor } from "./Functor"
+import { Identity, Identity$kind } from "./Identity"
 
-type λ<F, G> = Kind2.λ<Kind3.λ<Compose$kind, F>, G>
-
-export class Compose<F extends Kind1, G extends Kind1, A> extends FunctorSyntax<λ<F, G>> {
-  constructor(private F: Functor<F>, private G: Functor<G>) {
-    super(Compose)
-  }
-
-  getCompose(): Fix<F, Fix<G, A>> {
-    throw new Error("not implemented")
-  }
+declare const enum Lift$witness {}
+interface Lift<F extends Kind1, G extends Kind1> extends Kind1<F[Kind1.witness]> {
+  [Kind1.refine]: [this] extends [Type1<Lift<F, G>, infer A>] ? Fix<F, Fix<G, A>> : never
 }
 
-export namespace Compose {}
+// Type1<Lift<F, G>, string> === Type1<F, Type1<G, string>>
 
-// #region Type constructor * -> * -> * -> *
-declare const enum Compose$witness {}
-interface Compose$kind extends Kind3<Compose$witness> {
-  [Kind3.refine]: this extends Compose<infer F, infer G, infer A> ? Compose<F, G, A> : never
-}
-export interface Compose<F extends Kind1, G extends Kind1, A> extends Type3<Compose$kind, F, G, A> {}
-// #region
+type fixed = Fix<Lift<Identity$kind, Identity$kind>, string>
+
+declare function composeFunctors<F extends Kind1, G extends Kind1>(F: Functor<F>, G: Functor<G>): Functor<Lift<F, G>>
+
+const FF = composeFunctors(Identity, Identity)
+
+declare const iid: Identity<Identity<string>>
+Functor(FF).map(iid, String)
