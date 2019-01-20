@@ -1,10 +1,7 @@
-import { Monad, flatMap, flatten } from "@bonsai/core"
+import { MonadLaws } from "@bonsai/core"
 import { IO } from "./IO"
+import { anything } from "fast-check"
 
-declare const io: IO<IO<number>>
-
-const test1 = Monad(IO).flatMap(io, x => IO.pure("foo"))
-const test2 = flatMap(IO, io, x => IO.pure("foo"))
-// FIXME: Incorrect inference
-const test3 = flatten(IO, IO.pure(IO.pure(2)))
-const test4 = io.flatten()
+describe("IO", () => {
+  MonadLaws.run(IO, anything().map(IO.pure), anything())
+})

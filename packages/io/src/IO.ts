@@ -1,5 +1,5 @@
 import { Monad, Functor, MonadSyntax } from "@bonsai/core"
-import { Type1, Kind1 } from "@bonsai/kinds"
+import { Type1, Kind1, Kind } from "@bonsai/kinds"
 
 export class IO<A> extends MonadSyntax<IO$kind> {
   constructor(private run: () => A) {
@@ -31,6 +31,6 @@ export namespace IO {
 
 declare const enum IO$witness {}
 interface IO$kind extends Kind1<IO$witness> {
-  [Kind1.refine]: this extends Type1<IO$kind, infer A> ? IO<A> : never
+  [Kind.refine]: this extends Type1<IO$kind, infer A> ? IO<A> : never
 }
 export interface IO<A> extends Type1<IO$kind, A> {}
