@@ -3,10 +3,9 @@ export * from "./Applicative"
 export * from "./Monad"
 export * from "./Semigroup"
 export * from "./Traversable"
-
 export * from "./Identity"
 export * from "./Const"
-
+export * from "./List"
 export * from "./utils"
-
 export * from "./laws"
+export * from "@bonsai/kinds"
