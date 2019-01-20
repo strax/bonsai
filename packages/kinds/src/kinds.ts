@@ -7,7 +7,7 @@ export const enum Void {}
 
 interface Kind {
   [Kind.witness]: unknown
-  [Kind.refine]: Void
+  [Kind.refine]: unknown
 }
 
 export namespace Kind {
@@ -24,6 +24,7 @@ export namespace Kind {
 export interface Kind1<W = any> extends Kind {
   [Kind.witness]: W
   [Kind.arity]: 1
+  [Kind.refine]: Type1<Kind1<W>, unknown>
 }
 
 export interface Type<F extends Kind, Args extends Tuple> {
@@ -54,6 +55,7 @@ export type Ap<F extends Kind1, A> = F extends F ? Refine<Type1<F, A>> : Type1<F
 export interface Kind2<W = any> extends Kind {
   [Kind.witness]: W
   [Kind.arity]: 2
+  [Kind.refine]: Type2<Kind2<W>, unknown, unknown>
 }
 
 export type Type2<F extends Kind2, A, B> = Type<F, [A, B]>
@@ -63,6 +65,7 @@ export type Ap2<F extends Kind2, A, B> = F extends F ? Bounded<Refine<Type2<F, A
 export interface Kind3<W = any> extends Kind {
   [Kind.witness]: W
   [Kind.arity]: 3
+  [Kind.refine]: Type3<Kind3<W>, unknown, unknown, unknown>
 }
 
 export type Type3<F extends Kind3, A, B, C> = Type<F, [A, B, C]>

@@ -9,6 +9,6 @@
     "keyofStringsOnly": false
   },
   "include": ["src/**/*"],
-  "exclude": ["dist/**/*", "src/kinds.test.ts"],
+  "exclude": ["dist/**/*"],
   "references": []
 }

@@ -1,4 +1,4 @@
-import { Type1, Kind1, Ap, Kind, Type, Refine, Void, Kind2, Kind3, Type2, Type3, Ap2, Ap3 } from "./kinds"
+import { Type1, Kind1, Ap, Kind, Type, Kind2, Kind3, Type2, Type3, Ap2, Ap3 } from "./kinds"
 import { _, λ } from "./TypeLambda"
 
 // #region Example containers with kinds * -> * and * -> * -> *
@@ -19,7 +19,7 @@ declare const enum Identity$witness {}
 //    the Kind1.refine property does not exist at runtime but contains the mapping from
 //    a Type1<F$kind, A> to F<A>
 interface Identity$kind extends Kind1<Identity$witness> {
-  [Kind.refine]: this extends Type1<Identity$kind, infer A> ? Identity<A> : Void
+  [Kind.refine]: this extends Type1<Identity$kind, infer A> ? Identity<A> : never
 }
 // 3. Augment the original type to be assignable to Type1<F$kind, A>
 interface Identity<A> extends Type1<Identity$kind, A> {}
@@ -36,7 +36,7 @@ class Const<A, B> {
 // Const has kind * -> * -> * so we extend Kind2 instead of Kind1 and Type2 instead of Type1
 declare const enum Const$witness {}
 interface Const$kind extends Kind2<Const$witness> {
-  [Kind.refine]: this extends Type2<Const$kind, infer T1, infer T2> ? Const<T1, T2> : Void
+  [Kind.refine]: this extends Type2<Const$kind, infer T1, infer T2> ? Const<T1, T2> : never
 }
 interface Const<A, B> extends Type2<Const$kind, A, B> {}
 
@@ -46,7 +46,7 @@ class Forget<R, A, B> {
 
 declare const enum Forget$witness {}
 interface Forget$kind extends Kind3<Forget$witness> {
-  [Kind.refine]: this extends Type3<Forget$kind, infer T1, infer T2, infer T3> ? Forget<T1, T2, T3> : Void
+  [Kind.refine]: this extends Type3<Forget$kind, infer T1, infer T2, infer T3> ? Forget<T1, T2, T3> : never
 }
 interface Forget<R, A, B> extends Type3<Forget$kind, R, A, B> {}
 
@@ -73,19 +73,19 @@ const test2 = fix(new Identity("foo"))
 // For kinds * -> * -> * there exists an auxiliary kind
 // Kind2.λ<K extends Kind2, A> <: Kind1 which allows us to
 // operate on partially-applied kinds
-const test3 = prj(inj(new Const<number, string>(2)))
-const test4 = fix(new Const<number, string>(2))
+// const test3 = prj(inj(new Const<number, string>(2)))
+// const test4 = fix(new Const<number, string>(2))
 
 // Const :: * -> * -> *
 const test5 = prj2(inj2(new Const<number, string>(2)))
 const test6 = fix2(new Const<number, string>(2))
 
 // Forget :: * -> * -> * -> *
-const test7 = prj2(inj2(new Forget<string, number, string>(n => "foo")))
+// const test7 = prj2(inj2(new Forget<string, number, string>(n => "foo")))
 const test8 = prj3(inj3(new Forget<string, number, string>(n => "foo")))
 const test9 = fix3(new Forget<string, number, string>(n => "foo"))
-const test10 = fix2(new Forget<string, number, string>(n => "foo"))
-const test11 = fix(new Forget<string, number, string>(n => "foo"))
+// const test10 = fix2(new Forget<string, number, string>(n => "foo"))
+// const test11 = fix(new Forget<string, number, string>(n => "foo"))
 // #endregion
 
 interface Functor<F extends Kind1> {
@@ -93,4 +93,4 @@ interface Functor<F extends Kind1> {
 }
 
 declare const IdentityFunctor: Functor<λ<Identity<_>>>
-declare const ConstFunctor: Functor<λ<Const<_, string>>>
+declare const ConstFunctor: Functor<λ<Const<string, _>>>
