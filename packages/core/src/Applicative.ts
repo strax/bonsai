@@ -1,9 +1,9 @@
-import { Fix, Kind1 } from "@bonsai/kinds"
+import { Ap, Kind1 } from "@bonsai/kinds"
 import { FunctorOps, FunctorInstance, FunctorSyntax } from "./Functor"
 
 export interface ApplicativeInstance<F extends Kind1> extends FunctorInstance<F> {
-  [Applicative.pure]<A>(a: A): Fix<F, A>
-  [Applicative.ap]<A, B>(fa: Fix<F, A>, fab: Fix<F, (a: A) => B>): Fix<F, B>
+  [Applicative.pure]<A>(a: A): Ap<F, A>
+  [Applicative.ap]<A, B>(fa: Ap<F, A>, fab: Ap<F, (a: A) => B>): Ap<F, B>
 }
 
 export function Applicative<F extends Kind1>(from: Applicative<F>): ApplicativeOps<F> {
@@ -20,8 +20,8 @@ export namespace Applicative {
 }
 
 export interface ApplicativeOps<F extends Kind1> extends FunctorOps<F> {
-  pure<A>(a: A): Fix<F, A>
-  ap<A, B>(fa: Fix<F, A>, fab: Fix<F, (a: A) => B>): Fix<F, B>
+  pure<A>(a: A): Ap<F, A>
+  ap<A, B>(fa: Ap<F, A>, fab: Ap<F, (a: A) => B>): Ap<F, B>
 }
 
 export function ApplicativeOps<F extends Kind1>(F: ApplicativeInstance<F>) {
@@ -39,27 +39,27 @@ export abstract class ApplicativeSyntax<F extends Kind1> extends FunctorSyntax<F
     this.applicative = Applicative(F)
   }
 
-  ap<A, B>(this: Fix<F, A>, fab: Fix<F, (a: A) => B>): Fix<F, B> {
-    return (this as ApplicativeSyntax<F>).applicative.ap(this, fab)
+  ap<A, B>(this: Ap<F, A>, fab: Ap<F, (a: A) => B>): Ap<F, B> {
+    return ((this as unknown) as ApplicativeSyntax<F>).applicative.ap(this, fab)
   }
 }
 
 export type Applicative<F extends Kind1> = ApplicativeInstance<F> | ApplicativeOps<F>
 
-export function ap<F extends Kind1, A, B>(F: Applicative<F>, fa: Fix<F, A>, fab: Fix<F, (a: A) => B>): Fix<F, B> {
+export function ap<F extends Kind1, A, B>(F: Applicative<F>, fa: Ap<F, A>, fab: Ap<F, (a: A) => B>): Ap<F, B> {
   return Applicative(F).ap(fa, fab)
 }
 
-export function pure<F extends Kind1>(F: Applicative<F>): <A>(a: A) => Fix<F, A> {
+export function pure<F extends Kind1>(F: Applicative<F>): <A>(a: A) => Ap<F, A> {
   return a => Applicative(F).pure(a)
 }
 
 export function map2<F extends Kind1, A, B, C>(
   F: Applicative<F>,
-  fa: Fix<F, A>,
-  fb: Fix<F, B>,
+  fa: Ap<F, A>,
+  fb: Ap<F, B>,
   f: (a: A, b: B) => C
-): Fix<F, C> {
+): Ap<F, C> {
   const { pure, ap } = Applicative(F)
   const ff = pure((a: A) => (b: B) => f(a, b))
   return ap(fb, ap(fa, ff))

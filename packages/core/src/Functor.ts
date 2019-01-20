@@ -1,11 +1,11 @@
-import { Kind1, Fix } from "@bonsai/kinds"
+import { Kind1, Ap } from "@bonsai/kinds"
 
 export interface FunctorInstance<F extends Kind1> {
-  [Functor.map]<A, B>(fa: Fix<F, A>, f: (a: A) => B): Fix<F, B>
+  [Functor.map]<A, B>(fa: Ap<F, A>, f: (a: A) => B): Ap<F, B>
 }
 
 export interface FunctorOps<F extends Kind1> {
-  map<A, B>(fa: Fix<F, A>, f: (a: A) => B): Fix<F, B>
+  map<A, B>(fa: Ap<F, A>, f: (a: A) => B): Ap<F, B>
 }
 
 export abstract class FunctorSyntax<F extends Kind1> {
@@ -15,8 +15,8 @@ export abstract class FunctorSyntax<F extends Kind1> {
     this.functor = Functor(F)
   }
 
-  map<A, B>(this: Fix<F, A>, f: (a: A) => B): Fix<F, B> {
-    return (this as FunctorSyntax<F>).functor.map(this, f)
+  map<A, B>(this: Ap<F, A>, f: (a: A) => B): Ap<F, B> {
+    return ((this as unknown) as FunctorSyntax<F>).functor.map(this, f)
   }
 }
 
@@ -40,6 +40,6 @@ export namespace Functor {
   export const map = Symbol("Functor.map")
 }
 
-export function fmap<F extends Kind1, A, B>(F: Functor<F>, fa: Fix<F, A>, f: (a: A) => B): Fix<F, B> {
+export function fmap<F extends Kind1, A, B>(F: Functor<F>, fa: Ap<F, A>, f: (a: A) => B): Ap<F, B> {
   return Functor(F).map(fa, f)
 }

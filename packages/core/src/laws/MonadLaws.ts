@@ -1,16 +1,16 @@
-import { Kind1, Fix } from "@bonsai/kinds"
+import { Kind1, Ap } from "@bonsai/kinds"
 import { Arbitrary, property, func, assert } from "fast-check"
 import { isDeepStrictEqual as eq } from "util"
 import { ApplicativeLaws } from "./ApplicativeLaws"
 import { Monad } from "../Monad"
 
 export namespace MonadLaws {
-  export function run<M extends Kind1, A>(M: Monad<M>, arbMA: Arbitrary<Fix<M, A>>, arbA: Arbitrary<A>) {
+  export function run<M extends Kind1, A>(M: Monad<M>, arbMA: Arbitrary<Ap<M, A>>, arbA: Arbitrary<A>) {
     ApplicativeLaws.run(M, arbMA, arbA)
 
     describe("MonadLaws", () => {
       const { pure, flatMap } = Monad(M)
-      const arbF = func<[A], Fix<M, A>>(arbMA)
+      const arbF = func<[A], Ap<M, A>>(arbMA)
       test("(Left identity) flatMap(pure(a), f) === f(a)", () => {
         assert(property(arbA, arbF, (a, f) => eq(flatMap(pure(a), f), f(a))))
       })

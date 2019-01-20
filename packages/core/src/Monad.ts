@@ -1,9 +1,9 @@
-import { Fix, Kind1 } from "@bonsai/kinds"
+import { Ap, Kind1 } from "@bonsai/kinds"
 import { ApplicativeInstance, ApplicativeOps, ApplicativeSyntax } from "./Applicative"
 import { id } from "./utils"
 
 export interface MonadInstance<M extends Kind1> extends ApplicativeInstance<M> {
-  [Monad.flatMap]<A, B>(ma: Fix<M, A>, f: (a: A) => Fix<M, B>): Fix<M, B>
+  [Monad.flatMap]<A, B>(ma: Ap<M, A>, f: (a: A) => Ap<M, B>): Ap<M, B>
 }
 
 export function Monad<F extends Kind1>(from: Monad<F>): MonadOps<F> {
@@ -22,12 +22,12 @@ export abstract class MonadSyntax<M extends Kind1> extends ApplicativeSyntax<M> 
     this.monad = Monad(M)
   }
 
-  flatMap<A, B>(this: Fix<M, A>, f: (a: A) => Fix<M, B>): Fix<M, B> {
-    return (this as MonadSyntax<M>).monad.flatMap(this, f)
+  flatMap<A, B>(this: Ap<M, A>, f: (a: A) => Ap<M, B>): Ap<M, B> {
+    return ((this as unknown) as MonadSyntax<M>).monad.flatMap(this, f)
   }
 
-  flatten<A>(this: Fix<M, Fix<M, A>>): Fix<M, A> {
-    return flatten((this as MonadSyntax<M>).monad, (this as unknown) as Fix<M, Fix<M, A>>)
+  flatten<A>(this: Ap<M, Ap<M, A>>): Ap<M, A> {
+    return flatten(((this as unknown) as MonadSyntax<M>).monad, (this as unknown) as Ap<M, Ap<M, A>>)
   }
 }
 
@@ -36,14 +36,14 @@ export namespace Monad {
 }
 
 interface MonadOps<M extends Kind1> extends ApplicativeOps<M> {
-  flatMap<A, B>(ma: Fix<M, A>, f: (a: A) => Fix<M, B>): Fix<M, B>
+  flatMap<A, B>(ma: Ap<M, A>, f: (a: A) => Ap<M, B>): Ap<M, B>
 }
 
 export function MonadOps<M extends Kind1>(M: MonadInstance<M>) {
   return class extends ApplicativeOps(M) implements MonadOps<M> {
     flatMap = M[Monad.flatMap]
 
-    flatten<A>(mma: Fix<M, Fix<M, A>>): Fix<M, A> {
+    flatten<A>(mma: Ap<M, Ap<M, A>>): Ap<M, A> {
       return this.flatMap(mma, id)
     }
   }
@@ -51,16 +51,16 @@ export function MonadOps<M extends Kind1>(M: MonadInstance<M>) {
 
 export type Monad<M extends Kind1> = MonadInstance<M> | MonadOps<M>
 
-export function flatMap<M extends Kind1, A, B>(M: Monad<M>, ma: Fix<M, A>, f: (a: A) => Fix<M, B>) {
+export function flatMap<M extends Kind1, A, B>(M: Monad<M>, ma: Ap<M, A>, f: (a: A) => Ap<M, B>) {
   return Monad(M).flatMap(ma, f)
 }
 
 export const chain = flatMap
 
-export function flatten<M extends Kind1, A>(M: Monad<M>, ma: Fix<M, Fix<M, A>>): Fix<M, A> {
+export function flatten<M extends Kind1, A>(M: Monad<M>, ma: Ap<M, Ap<M, A>>): Ap<M, A> {
   return Monad(M).flatMap(ma, x => x)
 }
 
-export function composeK<M extends Kind1, A, B, C>(M: Monad<M>, f: (b: B) => Fix<M, C>, g: (a: A) => Fix<M, B>) {
+export function composeK<M extends Kind1, A, B, C>(M: Monad<M>, f: (b: B) => Ap<M, C>, g: (a: A) => Ap<M, B>) {
   return (a: A) => Monad(M).flatMap(g(a), f)
 }

@@ -1,4 +1,4 @@
-import { Kind1, Type1, Fix } from "@bonsai/kinds"
+import { Kind1, Type1, Ap, Kind, Void, _, λ } from "@bonsai/kinds"
 import { ApplicativeSyntax } from "./Applicative"
 
 export class Identity<A> extends ApplicativeSyntax<Identity$kind> {
@@ -16,7 +16,7 @@ export namespace Identity {
     return new Identity(f(fa.get()))
   }
 
-  export function pure<A>(a: A): Fix<Identity$kind, A> {
+  export function pure<A>(a: A): Identity<A> {
     return new Identity(a)
   }
 
@@ -36,7 +36,7 @@ declare const enum Identity$witness {}
  * The [Kind1.refine] parameter allows us to obtain a concrete Identity<A> from a "generic" type application
  */
 export interface Identity$kind extends Kind1<Identity$witness> {
-  [Kind1.refine]: [this] extends [Type1<Identity$kind, infer A>] ? Identity<A> : never
+  [Kind.refine]: this extends Type1<Identity$kind, infer A> ? Identity<A> : never
 }
 
 export interface Identity<A> extends Type1<Identity$kind, A> {}

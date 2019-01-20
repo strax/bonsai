@@ -1,12 +1,12 @@
 import { Applicative } from "../Applicative"
 import { id } from "../utils"
-import { Kind1, Fix } from "@bonsai/kinds"
+import { Kind1, Ap } from "@bonsai/kinds"
 import { Arbitrary, property, func, assert } from "fast-check"
 import { isDeepStrictEqual as eq } from "util"
 import { FunctorLaws } from "./FunctorLaws"
 
 export namespace ApplicativeLaws {
-  export function run<F extends Kind1, A>(F: Applicative<F>, arbFA: Arbitrary<Fix<F, A>>, arbA: Arbitrary<A>) {
+  export function run<F extends Kind1, A>(F: Applicative<F>, arbFA: Arbitrary<Ap<F, A>>, arbA: Arbitrary<A>) {
     FunctorLaws.run(F, arbFA, arbA)
 
     describe("ApplicativeLaws", () => {
