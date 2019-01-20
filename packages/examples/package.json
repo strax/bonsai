@@ -1,0 +1,16 @@
+{
+  "name": "@bonsai/examples",
+  "description": "Sandbox for testing Bonsai packages in conjunction",
+  "private": true,
+  "version": "0.0.0",
+  "dependencies": {
+    "@bonsai/io": "*",
+    "@bonsai/core": "*",
+    "@bonsai/option": "*",
+    "@bonsai/monads": "*"
+  },
+  "devDependencies": {
+    "typescript": "*",
+    "ts-node": "7.0.1"
+  }
+}
