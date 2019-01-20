@@ -10,8 +10,7 @@
     "email": "sami@samikukkonen.fi"
   },
   "dependencies": {
-    "@bonsai/core": "*",
-    "@bonsai/ext": "*"
+    "@bonsai/core": "*"
   },
   "devDependencies": {
     "typescript": "*",

@@ -1,5 +1,5 @@
 import Option from "."
-import { MonadLaws } from "@bonsai/laws"
+import { MonadLaws } from "@bonsai/core"
 import { oneof, constant, Arbitrary, anything } from "fast-check"
 
 const arbOption = <A>(arbA: Arbitrary<A>): Arbitrary<Option<A>> =>

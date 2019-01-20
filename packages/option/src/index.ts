@@ -1,5 +1,5 @@
 import { id, MonadSyntax } from "@bonsai/core"
-import { Kind1, Type1 } from "@bonsai/kinds"
+import { Kind1, Type1, Kind, Void } from "@bonsai/kinds"
 
 const isNot = <A>(a: A) => <B>(b: A | B): b is Exclude<B, A> => b !== a
 
@@ -69,7 +69,7 @@ export namespace Option {
 // #region Bonsai HKT encoding
 declare const enum Option$witness {}
 interface Option$kind extends Kind1<Option$witness> {
-  [Kind1.refine]: this extends Type1<Option$kind, infer A> ? Option<A> : never
+  [Kind.refine]: this extends Type1<Option$kind, infer A> ? Option<A> : never
 }
 
 export interface Option<A> extends Type1<Option$kind, A> {}
