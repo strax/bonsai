@@ -52,8 +52,32 @@ namespace Tuple {
   export type FilterNot<T extends Tuple, B> = Filter<T, Exclude<Tuple.Values<T>, B>>
 
   export type Count<T extends Tuple, A> = Tuple.Length<Filter<T, A>>
+
+  namespace FromNested {
+    export type Merge<T> = T extends [infer H, infer U] ? (U extends Tuple ? Tuple.Prepend<H, U> : [H, U]) : T
+  }
+
+  export type FromNested<T> = T extends [unknown, unknown]
+    ? FromNested.Merge<{ [K in keyof T]: K extends "0" ? T[K] : FromNested<T[K]> }>
+    : T extends [unknown]
+    ? T[0]
+    : []
+
+  namespace ToNested {
+    export type Aux<T extends Tuple> = T extends [infer A, infer B, ...unknown[]] ? [A, B] : Tuple.Append<T, []>
+  }
+
+  export type ToNested<T extends Tuple.NE> = ToNested.Aux<
+    {
+      [K in keyof T]: K extends "0"
+        ? Tuple.Head<T>
+        : (Tuple.Tail<T> extends infer U ? (U extends Tuple.NE ? ToNested<U> : U) : [])
+    }
+  >
 }
 
-type z = Tuple.Filter<[1, 1, 2, 3], 1 | 2>
+type z = Tuple.ToNested<Tuple.FromNested<[1, [2, [3, []]]]>>
+
+type zo = Tuple.Filter<[1, 1, 2, 3], 1 | 2>
 
 export default Tuple
