@@ -54,21 +54,14 @@ type zz = Identity<string>[Type.witness]
 
 // #endregion
 
-declare function inj<F extends Kind1, A>(fa: Type1<F, A>): Type1<F, A>
-declare function prj<F extends Kind1, A>(fa: Type1<F, A>): Ap<F, A>
-declare function fix<F extends Kind1, A>(fa: Ap<F, A>): Ap<F, ["A", A]>
+declare function fix<F extends Kind1, A>(fa: Ap<F, A>): Ap<F, "Changed">
 
-declare function inj2<F extends Kind2, A, B>(fa: Type2<F, A, B>): Type2<F, A, B>
-declare function prj2<F extends Kind2, A, B>(fa: Type2<F, A, B>): Ap2<F, A, B>
-declare function fix2<F extends Kind2, A, B>(fa: Ap2<F, A, B>): Ap2<F, ["A", A], ["B", B]>
+declare function fix2<F extends Kind2, A, B>(fa: Ap2<F, A, B>): Ap2<F, "Changed A", "Changed B">
 
-declare function inj3<F extends Kind3, A, B, C>(fa: Type3<F, A, B, C>): Type3<F, A, B, C>
-declare function prj3<F extends Kind3, A, B, C>(fa: Type3<F, A, B, C>): Ap3<F, A, B, C>
-declare function fix3<F extends Kind3, A, B, C>(fa: Ap3<F, A, B, C>): Ap3<F, ["A", A], ["B", B], ["C", C]>
+declare function fix3<F extends Kind3, A, B, C>(fa: Ap3<F, A, B, C>): Ap3<F, "Changed A", "Changed B", "Changed C">
 
 // #region Moving between Type1 and concrete types
 // Identity :: * -> *
-const test1 = prj(inj(new Identity("foo")))
 const test2 = fix(new Identity("foo"))
 // For kinds * -> * -> * there exists an auxiliary kind
 // Kind2.λ<K extends Kind2, A> <: Kind1 which allows us to
@@ -77,12 +70,10 @@ const test2 = fix(new Identity("foo"))
 // const test4 = fix(new Const<number, string>(2))
 
 // Const :: * -> * -> *
-const test5 = prj2(inj2(new Const<number, string>(2)))
 const test6 = fix2(new Const<number, string>(2))
 
 // Forget :: * -> * -> * -> *
 // const test7 = prj2(inj2(new Forget<string, number, string>(n => "foo")))
-const test8 = prj3(inj3(new Forget<string, number, string>(n => "foo")))
 const test9 = fix3(new Forget<string, number, string>(n => "foo"))
 // const test10 = fix2(new Forget<string, number, string>(n => "foo"))
 // const test11 = fix(new Forget<string, number, string>(n => "foo"))

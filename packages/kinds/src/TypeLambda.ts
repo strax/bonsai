@@ -1,34 +1,32 @@
 import Tuple from "@bonsai/tuples"
 import { Type, Kind, Refine } from "./kinds"
 
-type Eq<A, B> = [A] extends [B] ? ([B] extends [A] ? true : false) : false
+type ReplaceTypeHoles$Helper<T, Subs extends Tuple> = T extends [unknown, Tuple]
+  ? (Subs extends Tuple.NE
+      ? {
+          [K in keyof T]: K extends "0"
+            ? (T[K] extends _ ? Tuple.Head<Subs> : T[K])
+            : ReplaceTypeHoles<T[1], T[0] extends _ ? Tuple.Tail<Subs> : Subs>
+        }
+      : T)
+  : never
 
 // Given an argument list T and substitutions Subs,
 // replaces type holes (_) from left to right with the values from Subs.
 // NOTE: If there are fewer type holes than substitutions, unapplied substitutions are discarded.
-// FIXME: Bypasses compiler recursion checks, check if this can be done more appropriately
-type ReplaceTypeHoles<
-  T extends Tuple,
-  Subs extends Tuple,
-  Acc extends Tuple = [],
-  K extends string = ""
-> = T extends Tuple.NE
-  ? {
-      [I in K]: Subs extends Tuple.NE
-        ? T[0] extends _
-          ? _ extends T[0]
-            ? ReplaceTypeHoles<Tuple.Tail<T>, Tuple.Tail<Subs>, Tuple.Append<Acc, Subs[0]>, K>
-            : ReplaceTypeHoles<Tuple.Tail<T>, Subs, Tuple.Append<Acc, T[0]>, K>
-          : ReplaceTypeHoles<Tuple.Tail<T>, Subs, Tuple.Append<Acc, T[0]>, K>
-        : ReplaceTypeHoles<Tuple.Tail<T>, Subs, Tuple.Append<Acc, T[0]>, K>
-    }[K]
-  : Acc
-
-type z = ReplaceTypeHoles<[_], [string, string]>
+type ReplaceTypeHoles<T extends Tuple, Subs extends Tuple> = T extends Tuple.NE
+  ? Tuple.FromNested<ReplaceTypeHoles$Helper<Tuple.ToNested<T>, Subs>>
+  : T
 
 type ReplaceValues<T extends Tuple, From, To> = { [I in keyof T]: T[I] extends From ? To : T[I] }
 
-export const enum _ {}
+// #region Type hole marker
+declare const TypeHoleMarker: unique symbol
+type TypeHoleMarker = typeof TypeHoleMarker
+export interface _ {
+  [TypeHoleMarker]: TypeHoleMarker
+}
+// #endregion
 
 declare const enum λ$witness {}
 
@@ -41,7 +39,5 @@ export interface λ<T extends Type<any, any>> {
     ? Refine<Type<Type.ToKind<T>, ReplaceTypeHoles<Type.ToArgs<T>, Args>>> // ? ReplaceTypeHoles<T[Type.witness][1], Args>
     : never
 }
-
-type test = Tuple.Count<[1, 2, 3], 2>
 
 export type Lambda<T extends Type<any, any>> = λ<T>
