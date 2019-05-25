@@ -9,9 +9,9 @@
     "@types/jest": "23.3.12",
     "jest": "23.6.0",
     "ts-jest": "23.10.5",
-    "typescript": "3.3.0-dev.20190119"
+    "typescript": "3.5.0-dev.20190525"
   },
   "resolutions": {
-    "typescript": "3.3.0-dev.20190119"
+    "typescript": "3.5.0-dev.20190525"
   }
 }

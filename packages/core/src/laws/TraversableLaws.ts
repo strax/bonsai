@@ -1,20 +1,20 @@
-// import { Applicative, fmap, id, pure, ap, Monad, Traversable, Functor } from "@bonsai/core"
-// import { Kind1, Fix } from "@bonsai/kinds"
-// import { Arbitrary, property, check, func, assert } from "fast-check"
-// import { isDeepStrictEqual as eq } from "util"
-// import { FunctorLaws } from "./FunctorLaws"
-// import { ApplicativeLaws } from "./ApplicativeLaws"
+import { Arbitrary, property, check, func, assert } from "fast-check"
+import { isDeepStrictEqual as eq } from "util"
+import { FunctorLaws } from "./FunctorLaws"
+import { IsTraversable } from "../Traversable";
+import { Of } from "tshkt";
+import { Identity } from "../Identity";
 
-// export namespace TraversableLaws {
-//   export function run<T extends Kind1, A>(T: Traversable<T>, arbMA: Arbitrary<Fix<T, A>>, arbA: Arbitrary<A>) {
-//     FunctorLaws.run(T, arbMA, arbA)
+export namespace TraversableLaws {
+  export function run<T extends IsTraversable<T>, A>(arbTA: Arbitrary<Of<T, A>>, arbA: Arbitrary<A>) {
+    FunctorLaws.run(arbTA, arbA)
 
-//     describe("TraversableLawsk", () => {
-//       const { traverse, sequence } = Traversable(T)
-//       test("(Identity) traverse(Identity, t) === new Identity(t)", () => {
-//         assert(property(arbA, arbF, (a, f) => eq(flatMap(pure(a), f), f(a))))
-//       })
-//       test("(Composition) ", () => {})
-//     })
-//   }
-// }
+    describe("TraversableLawsk", () => {
+      test("(Identity) traverse(Identity.of, t) === Identity.of(t)", () => {
+        assert(property(arbTA, t => eq(t.traverse(Identity.of), Identity.of(t))))
+      })
+
+      // TODO: Rest
+    })
+  }
+}

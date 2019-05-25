@@ -3491,6 +3491,11 @@ ts-node@*, ts-node@7.0.1:
     source-map-support "^0.5.6"
     yn "^2.0.0"
 
+tshkt@0.2.0-alpha.2:
+  version "0.2.0-alpha.2"
+  resolved "https://registry.yarnpkg.com/tshkt/-/tshkt-0.2.0-alpha.2.tgz#786dfaba5497932fe31cd3b38aa9fbf44d57f163"
+  integrity sha512-sY3x92d97PwR9z0blIyXQlCW7ZKri3uznEhGnujNIEHZ5ZlQapa2JHxDvyfrC5zhqQ6bD1XR2i5LR115ubs6NQ==
+
 tunnel-agent@^0.6.0:
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/tunnel-agent/-/tunnel-agent-0.6.0.tgz#27a5dea06b36b04a0a9966774b290868f0fc40fd"
@@ -3510,10 +3515,10 @@ type-check@~0.3.2:
   dependencies:
     prelude-ls "~1.1.2"
 
-typescript@*, typescript@3.3.0-dev.20190119:
-  version "3.3.0-dev.20190119"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.3.0-dev.20190119.tgz#ea338e9ddf023a67fe1c244e51321933a1080203"
-  integrity sha512-idvKUbbKtDznX5dUsS9HuamKPpI4UrGkhjGFcDBeFEBxjQuZ9bSFtIiutAoh197PoWrzksqVRoRXMzt3VpiK6Q==
+typescript@*, typescript@3.5.0-dev.20190525:
+  version "3.5.0-dev.20190525"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.5.0-dev.20190525.tgz#1f3cd0e35be886b2a837d7efeebdf2fff727ee44"
+  integrity sha512-+EhVvwjYE3bLN3yc5kZHylvyqRB86oqWpO2XrYImi89ErqddhNx28ms50Gt8r3dzK4LUpEUWR9p/bL1I4L8sfw==
 
 uglify-js@^3.1.4:
   version "3.4.9"

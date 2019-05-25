@@ -11,9 +11,4 @@
   },
   "include": ["src/**/*"],
   "exclude": ["dist/**/*"],
-  "references": [
-    {
-      "path": "../kinds"
-    }
-  ]
 }

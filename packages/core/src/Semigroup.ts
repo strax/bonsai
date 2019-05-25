@@ -1,3 +1,3 @@
 export interface Semigroup<A> {
-  concat(a0: A, a1: A): A
+  concat(this: A, other: A): A
 }

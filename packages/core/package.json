@@ -5,7 +5,9 @@
   "license": "MIT",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "dependencies": {},
+  "dependencies": {
+    "tshkt": "0.2.0-alpha.2"
+  },
   "devDependencies": {
     "fast-check": "*",
     "typescript": "*",
