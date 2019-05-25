@@ -25,4 +25,8 @@ export class Identity<A> {
   ap<B>(fab: Identity<(a: A) => B>): Identity<B> {
     return new Identity(fab.get()(this.get()))
   }
+
+  flatMap<B>(f: (a: A) => Identity<B>): Identity<B> {
+    return f(this.value)
+  }
 }

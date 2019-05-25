@@ -1,7 +1,7 @@
 import { Arbitrary, property, func, assert } from "fast-check"
 import { isDeepStrictEqual as eq } from "util"
 import { ApplicativeLaws } from "./ApplicativeLaws"
-import { Monad, IsMonad } from "../Monad"
+import { IsMonad } from "../Monad"
 import { Pointed } from "../Pointed";
 import { Of } from "tshkt";
 
