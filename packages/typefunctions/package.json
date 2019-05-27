@@ -1,0 +1,12 @@
+{
+  "name": "@bonsai/typefunctions",
+  "version": "0.0.1",
+  "description": "Common type-level functions",
+  "devDependencies": {
+    "@bonsai/core": "*",
+    "typescript": "*"
+  },
+  "peerDependencies": {
+    "@bonsai/core": "*"
+  }
+}

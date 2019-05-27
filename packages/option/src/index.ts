@@ -1,18 +1,32 @@
-import { id, MonadSyntax } from "@bonsai/core"
-import { Kind1, Type1, Kind, Void } from "@bonsai/kinds"
+import { id } from "@bonsai/core"
+import { TypeFamily, Kind1, Generic, Generic1 } from "tshkt";
 
 const isNot = <A>(a: A) => <B>(b: A | B): b is Exclude<B, A> => b !== a
 
-export abstract class Option<A> extends MonadSyntax<Option$kind> {
+interface OptionF extends TypeFamily<Kind1> {
+  (): Option<this[0]>
+}
+
+export abstract class Option<A> {
+  [Generic.Type]: Generic1<OptionF, A>
+  ["constructor"]: typeof Option
+
   abstract get(): A
   abstract isEmpty(): boolean
 
+  static of<A>(a: A): Option<A> {
+    return new Some(a)
+  }
+
   constructor() {
-    super(Option)
   }
 
   fold<B>(f: (a: A) => B, b: () => B): B {
     return this.isEmpty() ? b() : f(this.get())
+  }
+
+  map<B>(f: (a: A) => B): Option<B> {
+    return this.fold<Option<B>>(a => Option.of(f(a)), () => None)
   }
 
   mapOpt<B>(f: (a: A) => B | null | undefined): Option<B> {
@@ -20,7 +34,7 @@ export abstract class Option<A> extends MonadSyntax<Option$kind> {
   }
 
   orElseL<B>(this: Option<B>, fb: () => Option<B>): Option<B> {
-    return this.fold(Option.pure, fb)
+    return this.fold(Option.of, fb)
   }
 
   orElse<B>(this: Option<B>, fb: Option<B>): Option<B> {
@@ -42,38 +56,17 @@ export abstract class Option<A> extends MonadSyntax<Option$kind> {
   filter<B extends A>(f: (a: A) => a is B): Option<B>
   filter(f: (a: A) => boolean): Option<A>
   filter(f: (a: A) => boolean): Option<A> {
-    return this.flatMap(a => (f(a) ? Option.pure(a) : Option.empty()))
+    return this.flatMap(a => (f(a) ? Option.of(a) : Option.empty()))
+  }
+
+  ap<B>(fab: Option<(a: A) => B>): Option<B> {
+    return fab.flatMap(f => this.map(f))
+  }
+
+  flatMap<B>(f: (a: A) => Option<B>): Option<B> {
+    return this.fold(f, () => None)
   }
 }
-
-// #region Monad<Option>
-export namespace Option {
-  export function map<A, B>(fa: Option<A>, f: (a: A) => B): Option<B> {
-    return fa.fold(a => pure(f(a)), () => None)
-  }
-
-  export function pure<A>(a: A): Option<A> {
-    return new Some(a)
-  }
-
-  export function ap<A, B>(fa: Option<A>, ff: Option<(a: A) => B>): Option<B> {
-    return ff.flatMap(f => fa.map(f))
-  }
-
-  export function flatMap<A, B>(fa: Option<A>, f: (a: A) => Option<B>): Option<B> {
-    return fa.fold(f, () => None)
-  }
-}
-// #endregion
-
-// #region Bonsai HKT encoding
-declare const enum Option$witness {}
-interface Option$kind extends Kind1<Option$witness> {
-  [Kind.refine]: this extends Type1<Option$kind, infer A> ? Option<A> : never
-}
-
-export interface Option<A> extends Type1<Option$kind, A> {}
-// #endregion
 
 export class Some<A> extends Option<A> {
   constructor(private value: A) {
@@ -109,7 +102,7 @@ const None = new class None extends Option<never> {
 
 export namespace Option {
   export function option<A>(a: A | undefined | null): Option<A> {
-    return pure(a)
+    return new Some(a)
       .filter(isNot(undefined))
       .filter(isNot(null))
   }
@@ -117,49 +110,6 @@ export namespace Option {
   export function empty(): Option<never> {
     return None
   }
-
-  // #region map2..map6
-  export function map2<A, B, C>(oa: Option<A>, ob: Option<B>, f: (a: A, b: B) => C): Option<C> {
-    return oa.flatMap(a => ob.map(b => f(a, b)))
-  }
-
-  export function map3<A, B, C, D>(oa: Option<A>, ob: Option<B>, oc: Option<C>, f: (a: A, b: B, c: C) => D): Option<D> {
-    return oa.flatMap(a => Option.map2(ob, oc, (...args) => f(a, ...args)))
-  }
-
-  export function map4<A, B, C, D, E>(
-    oa: Option<A>,
-    ob: Option<B>,
-    oc: Option<C>,
-    od: Option<D>,
-    f: (a: A, b: B, c: C, d: D) => E
-  ): Option<E> {
-    return oa.flatMap(a => Option.map3(ob, oc, od, (...args) => f(a, ...args)))
-  }
-
-  export function map5<A, B, C, D, E, F>(
-    oa: Option<A>,
-    ob: Option<B>,
-    oc: Option<C>,
-    od: Option<D>,
-    oe: Option<E>,
-    f: (a: A, b: B, c: C, d: D, e: E) => F
-  ): Option<F> {
-    return oa.flatMap(a => Option.map4(ob, oc, od, oe, (...args) => f(a, ...args)))
-  }
-
-  export function map6<A, B, C, D, E, F, G>(
-    oa: Option<A>,
-    ob: Option<B>,
-    oc: Option<C>,
-    od: Option<D>,
-    oe: Option<E>,
-    of: Option<F>,
-    g: (a: A, b: B, c: C, d: D, e: E, f: F) => G
-  ): Option<G> {
-    return oa.flatMap(a => Option.map5(ob, oc, od, oe, of, (...args) => g(a, ...args)))
-  }
-  // #endregion
 }
 
 export default Option

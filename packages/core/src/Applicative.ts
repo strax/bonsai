@@ -1,6 +1,6 @@
-import { Kind1, Of, TypeFamily } from "tshkt"
-import { Functor } from "./Functor"
-import { Pointed } from "./Pointed"
+import { Of, TypeFamily, Kind1 } from "tshkt"
+import { Functor } from "./Functor";
+import { Pointed } from "./Pointed";
 
 export interface Applicative<F, A> extends Functor<F, A> {
   constructor: Pointed<F>

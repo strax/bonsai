@@ -1,36 +1,33 @@
-import { Monad, Functor, MonadSyntax } from "@bonsai/core"
-import { Type1, Kind1, Kind } from "@bonsai/kinds"
+import { TypeFamily, Kind1, Generic, Generic1 } from "tshkt";
 
-export class IO<A> extends MonadSyntax<IO$kind> {
+interface IOF extends TypeFamily<Kind1> {
+  (): IO<this[0]>
+}
+
+export class IO<A> {
+  [Generic.Type]!: Generic1<IOF, A>
+  ["constructor"]!: typeof IO
+
+  static of<A>(a: A): IO<A> {
+    return new IO(() => a)
+  }
+
   constructor(private run: () => A) {
-    super(IO)
   }
 
   unsafeRun(): A {
     return this.run()
   }
-}
 
-export namespace IO {
-  export function map<A, B>(io: IO<A>, f: (a: A) => B): IO<B> {
-    return new IO(() => f(io.unsafeRun()))
+  map<B>(f: (a: A) => B): IO<B> {
+    return new IO(() => f(this.unsafeRun()))
   }
 
-  export function pure<A>(a: A): IO<A> {
-    return new IO(() => a)
+  ap<B>(fab: IO<(a: A) => B>): IO<B> {
+    return this.map(a => fab.unsafeRun()(a))
   }
 
-  export function ap<A, B>(fa: IO<A>, fab: IO<(a: A) => B>): IO<B> {
-    return Functor(IO).map(fa, a => fab.unsafeRun()(a))
-  }
-
-  export function flatMap<A, B>(fa: IO<A>, f: (a: A) => IO<B>): IO<B> {
-    return new IO(() => f(fa.unsafeRun()).unsafeRun())
+  flatMap<B>(f: (a: A) => IO<B>): IO<B> {
+    return new IO(() => f(this.unsafeRun()).unsafeRun())
   }
 }
-
-declare const enum IO$witness {}
-interface IO$kind extends Kind1<IO$witness> {
-  [Kind.refine]: this extends Type1<IO$kind, infer A> ? IO<A> : never
-}
-export interface IO<A> extends Type1<IO$kind, A> {}
