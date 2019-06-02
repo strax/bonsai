@@ -1,6 +1,6 @@
-import { Type1 } from "@bonsai/core/src/kinds";
+import { Type1 } from "./types";
 import { Of, Generic, Generic1 } from "tshkt";
-import { IsFunctor } from "./Functor";
+import { IsFunctor } from "@bonsai/core";
 
 declare const Pivot$: unique symbol
 type Pivot = typeof Pivot$
@@ -75,4 +75,4 @@ function IFunctor<F extends IsFunctor<F>>(): IFunctor<F> {
   }
 }
 
-const boxF = Coyoneda.liftF(new Box(2)).run(IFunctor())
+const boxF = Coyoneda.liftF(new Box(2))

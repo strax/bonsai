@@ -1,14 +1,13 @@
-import { Type1 } from "./kinds";
-import { Generic, Generic1, Of } from "tshkt";
-import { Monad } from "./Monad";
-import { IsFunctor } from "./Functor";
+import { IsFunctor, Monad } from "@bonsai/core"
+import { Generic, Generic1, Of } from "tshkt"
+import { Type1 } from "./types";
 
-interface FreeF<F extends Type1> extends Type1 {
+interface FreeF<F extends IsFunctor<F>> extends Type1 {
   (): Free<F, this[0]>
 }
 
 abstract class FreeC<F extends IsFunctor<F>, A> implements Monad<FreeF<F>, A> {
-  [Generic.Type]: Generic1<FreeF<F>, A>
+  [Generic.Type]: Generic1<FreeF<F>, A>;
   ["constructor"]: typeof Free
 
   protected constructor() {}
@@ -24,8 +23,7 @@ abstract class FreeC<F extends IsFunctor<F>, A> implements Monad<FreeF<F>, A> {
   abstract flatMap<B>(f: (a: A) => Free<F, B>): Free<F, B>
 }
 
-export interface Free<F extends IsFunctor<F>, A> extends FreeC<F, A> {
-}
+export interface Free<F extends IsFunctor<F>, A> extends FreeC<F, A> {}
 
 export namespace Free {
   export function of<F extends IsFunctor<F>, A>(a: A): Free<F, A> {

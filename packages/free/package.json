@@ -1,0 +1,12 @@
+{
+  "name": "@bonsai/free",
+  "version": "0.0.1",
+  "description": "Free monads and functors",
+  "devDependencies": {
+    "@bonsai/core": "*",
+    "typescript": "*"
+  },
+  "peerDependencies": {
+    "@bonsai/core": "*"
+  }
+}
