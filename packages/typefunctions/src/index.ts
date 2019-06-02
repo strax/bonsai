@@ -1,5 +1,4 @@
 import { TypeFamily, Kind1, Kind2, Of2, Of } from "tshkt"
-import { IsFunctor } from "@bonsai/core"
 
 export interface Id extends TypeFamily<Kind1> {
   (): this[0]
